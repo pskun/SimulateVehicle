@@ -2,8 +2,9 @@ package edu.bupt.sv.entity;
 
 public class Vehicle {
 	// 经度
-	private int longitude;
+	private double longitude;
 	// 纬度
-	private int latitude;
-	// 
+	private double latitude;
+	// 速度
+	private double speed;
 }
