@@ -7,4 +7,6 @@ public class Vehicle {
 	private double latitude;
 	// 速度
 	private double speed;
+	// 电量
+	private double charge;
 }
