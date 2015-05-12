@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.*;;
+import java.util.*;
+
+import edu.bupt.sv.utils.LogUtil;
 
 class ClientInput extends Thread {
 
@@ -78,13 +81,16 @@ public class Client {
 		ci.start();
 	}
 	
-	public Client (String host, int port) throws IOException{
+	public Client (String host, int port) throws IOException {
 		try{
-			this.socket = new Socket(host,port);
+			this.socket = new Socket();
+			//socket.setSoTimeout(5000);
+			socket.connect(new InetSocketAddress(host, port));
 			ci = new ClientInput(this);
 			ci.start();
 			isValid = true;
 		}catch (IOException e){
+			LogUtil.verbose("socket connect timeout.");
 			throw e;
 		}
 	}

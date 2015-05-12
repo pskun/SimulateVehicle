@@ -40,8 +40,10 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 	}
 	
 	@Override
-	public boolean initVehicle() {
-		return false;
+	public boolean initVehicle(Integer vehicleId) {
+		if(isThreadValid())
+			coreThread.sendMessage(MSG_INIT_VEHICLE, vehicleId);
+		return true;
 	}
 
 	@Override
@@ -64,15 +66,15 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 
 	@Override
 	public void requestVehicleList() {
-		// TODO Auto-generated method stub
-		
+		if(isThreadValid())
+			coreThread.sendMessage(MSG_VEHICLE_LIST);
 	}
 
 	@Override
-	public boolean getVehicleList() {
-		if(isThreadValid())
-			coreThread.sendMessage(MSG_VEHICLE_LIST);
-		return true;
+	public void destroyApi() {
+		if(isThreadValid()) {
+			coreThread.destroy();
+			coreListener = null;
+		}
 	}
-
 }

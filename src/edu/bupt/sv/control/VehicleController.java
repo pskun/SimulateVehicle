@@ -18,14 +18,23 @@ public class VehicleController {
 
 	// Link信息
 	
-	public void setLocation(double latitude, double longitude) {
+	/**
+	 * 设置位置，如果位置有更新则返回true，否则返回false
+	 * @param latitude
+	 * @param longitude
+	 */
+	public boolean setLocation(double latitude, double longitude) {
 		if (vehicle != null) {
-			vehicle.setLatitude(latitude);
-			vehicle.setLongitude(longitude);
+			if(vehicle.getLatitude() != latitude || vehicle.getLongitude() != longitude) {
+				vehicle.setLatitude(latitude);
+				vehicle.setLongitude(longitude);
+				return true;
+			}
 		}
 		else {
 			LogUtil.warn("entity vehicle is null.");
 		}
+		return false;
 	}
 	
 	public void start() {

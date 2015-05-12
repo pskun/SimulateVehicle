@@ -6,7 +6,7 @@ public interface CoreInterface {
 	
 	public void requestVehicleList();
 	
-	public boolean initVehicle();
+	public boolean initVehicle(Integer vehicleId);
 	
 	public boolean turnNewPath();
 	
@@ -14,5 +14,5 @@ public interface CoreInterface {
 	
 	public void requestCharge();
 	
-	public boolean getVehicleList();
+	public void destroyApi();
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import com.google.gson.*;
 
 import edu.bupt.sv.service.NetworkConstants;
+import edu.bupt.sv.utils.LogUtil;
 
 class Results {
 	public Results(int ID, String s) {
@@ -131,17 +132,19 @@ class PUBMessage_Dst {
 
 public class TMMessageHandler implements NetworkConstants {
 	static Client client = null;
-
-	public static void initialize() {
+	
+	public boolean initialize() {
 		try {
 			client = new Client(TM_HOST, TM_PORT);
 		} catch (Exception e) {
 			client = null;
-			System.exit(0);
+			LogUtil.verbose("initialize TMMessageHandler failed.");
+			return false;
 		}
+		return true;
 	}
 
-	public static void close() {
+	public void close() {
 
 		if (client != null) {
 			try {
@@ -258,8 +261,12 @@ public class TMMessageHandler implements NetworkConstants {
 	}
 
 	public TMMessageHandler(final TMListener handler) {
-		if (null == client)
-			initialize();
+		if (null == client) {
+			if(!initialize()) {
+				LogUtil.error("TMMessageHandler initialize failed.");
+				System.exit(1);
+			}
+		}
 		new Thread(new Runnable() {
 			public void run() {
 				while (client != null) {
@@ -277,6 +284,7 @@ public class TMMessageHandler implements NetworkConstants {
 				}
 			}
 		}).start();
+		LogUtil.verbose("TMMessageHandler: initialize TMMessageHandler done.");
 	}
 
 	public static void main(String[] args) {

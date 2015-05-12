@@ -38,6 +38,23 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		mHandler.obtainMessage(msgCode).sendToTarget();
 	}
 	
+	public void sendMessage(int msgCode, Object object) {
+		if(mHandler == null) {
+			LogUtil.warn("coreThread handler is null. Unable to send message.");
+			return;
+		}
+		mHandler.obtainMessage(msgCode, object).sendToTarget();
+	}
+	
+	public void destroy() {
+		if(mHandler == null) {
+			LogUtil.warn("coreThread handler is null. Don't need to destroy.");
+			return;
+		}
+		mHandler.removeCallbacksAndMessages(null);
+		mHandler.obtainMessage(MSG_ON_QUIT).sendToTarget();
+	}
+	
 	@Override
 	public void run() {
 		isRunning = true;
@@ -67,27 +84,60 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		case MSG_VEHICLE_LIST:
 			handleRequestVehicleList();
 			break;
+		case MSG_INIT_VEHICLE:
+			handleInitVehicle((Integer) msg.obj);
+			break;
 		case MSG_ON_RECEIVE:
 			handleReceiveData(msg.arg1, msg.obj);
+			break;
+		case MSG_ON_QUIT:
+			handleOnQuit();
 			break;
 		}
 	}
 	
 	private void handleInitThread() {
-		if (null != vehicleController) {
+		LogUtil.verbose("coreThread: begin initialize thread.");
+		if (null == vehicleController) {
 			vehicleController = new VehicleController();
 		}
 		else {
 			LogUtil.warn("vehicleController already exists.");
 		}
-		if (null != tmAccessor) {
+		if (null == tmAccessor) {
 			tmAccessor = new TMAccessor(mHandler);
 			tmAccessor.init();
 		}
+		LogUtil.verbose("coreThread is now initialized.");
+	}
+	
+	private void handleOnQuit() {
+		LogUtil.verbose("coreThread: begin destroy thread.");
+		isRunning = false;
+		if(tmAccessor != null) {
+			tmAccessor.destroy();
+		}
+		// TODO
+		Looper.myLooper().quit();
+		LogUtil.verbose("coreThread is now destroyed.");
 	}
 	
 	private void handleRequestVehicleList() {
-		
+		if (tmAccessor != null) {
+			boolean ret = tmAccessor.requestAllVehicle();
+			if(!ret && coreListener != null) {
+				coreListener.onError(ERROR_REQUEST_VEHICLE_LIST);
+			}
+		}
+	}
+	
+	private void handleInitVehicle(Integer vehicleId) {
+		if(tmAccessor != null) {
+			boolean ret = tmAccessor.requestInitVehicle(vehicleId);
+			if(!ret && coreListener != null) {
+				coreListener.onError(ERROR_INIT_VEHICLE);
+			}
+		}
 	}
 	
 	private void handleReceiveData(int dataType, Object data) {
@@ -104,6 +154,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		{
 		case DATA_VEHICLE_LIST:
 			coreListener.onRecvVehicleList((List<Integer>) data);
+			break;
+		case DATA_VEHICLE_INFO:
+			//if ()
 			break;
 		}
 	}

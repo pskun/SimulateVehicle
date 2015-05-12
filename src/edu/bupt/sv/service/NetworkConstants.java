@@ -10,6 +10,8 @@ public interface NetworkConstants {
 	// 响应码
 	// 成功取得数据或成功结束指令同步
 	public final int RES_SUCCESS_CODE = 200;
+	// 成功取得部分数据
+	public final int RES_PART_SUCCESS_CODE = 206;
 	// 请求消息错误
 	public final int RES_ERROR_CODE = 400;
 	// 没有需要的数据

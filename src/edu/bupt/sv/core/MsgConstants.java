@@ -23,7 +23,11 @@ public interface MsgConstants {
 	public static final int MSG_ON_ERROR = 8;
 	// 收到数据
 	public static final int MSG_ON_RECEIVE = 9;
+	// 销毁并退出
+	public static final int MSG_ON_QUIT	= 10;
 	
 	// 车辆列表数据标识
 	public static final int DATA_VEHICLE_LIST = 1;
+	// 车辆订阅数据标识
+	public static final int DATA_VEHICLE_INFO = 2;
 }
