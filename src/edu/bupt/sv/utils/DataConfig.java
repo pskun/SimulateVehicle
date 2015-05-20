@@ -31,6 +31,7 @@ public class DataConfig {
 	}
 
 	public boolean initAll() {
+		
 		if(!initMapData()) return false;
 		return initVehicleData();
 	}
@@ -45,8 +46,11 @@ public class DataConfig {
 
 	private boolean initMapData() {
 		try {
+			System.out.println("7");
 			if(!initNode()) return false;
+			System.out.println("55555555");
 			if(initRelation()) return false;
+			System.out.println("66666");
 			InputStreamReader in = new InputStreamReader(mContext
 					.getResources().getAssets().open(LINK_INFO_FILE));
 			BufferedReader bufReader = new BufferedReader(in);
@@ -151,12 +155,12 @@ public class DataConfig {
 				Double reservedEnergy = Double.parseDouble(split[9]);
 				Double speed = Double.parseDouble(split[10]);
 				line = bufReader.readLine();
-				String[] split1 = line.split("\t");
+				String[] split1 = line.split(" ");
 				List<Integer> path = new ArrayList<Integer>();
 				for (int i = 0; i < split1.length; i++) {
 					path.add(Integer.parseInt(split1[i]));
 				}
-				// 都走不存储的暂停点
+				// 读走不存储的暂停点
 				line = bufReader.readLine();
 
 				Vehicle vehicle = new Vehicle(id, startPos, endPos, linkID,
