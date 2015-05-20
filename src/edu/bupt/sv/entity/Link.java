@@ -2,9 +2,25 @@ package edu.bupt.sv.entity;
 
 public class Link {
 
-	private long id;
-	private long Anode;
-	private long Bnode;
+	private Integer id;
+	private Integer Anode;
+	private Integer Bnode;
 	private double length;
+	
+	
+
+	public Link(int id, Integer anode, Integer bnode, double length) {
+		super();
+		this.id = id;
+		Anode = anode;
+		Bnode = bnode;
+		this.length = length;
+		
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
 	
 }

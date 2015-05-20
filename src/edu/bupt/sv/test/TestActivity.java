@@ -1,11 +1,14 @@
 package edu.bupt.sv.test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import edu.bupt.sv.core.CoreApi;
 import edu.bupt.sv.core.CoreListener;
 import edu.bupt.sv.utils.LogUtil;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +21,8 @@ public class TestActivity extends Activity {
 	private Button vehicleListBtn;
 	private Button quitBtn;
 
+	private Context mContext;
+	
 	private CoreApi api;
 	
 	private CoreListener coreListener = new CoreListener() {
@@ -63,7 +68,7 @@ public class TestActivity extends Activity {
 	};
 	
 	private void init() {
-		api = new CoreApi();
+		api = new CoreApi(this);
 		api.setListener(coreListener);
 		api.initApi();
 	}

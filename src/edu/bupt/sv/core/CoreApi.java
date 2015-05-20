@@ -1,5 +1,6 @@
 package edu.bupt.sv.core;
 
+import android.content.Context;
 import edu.bupt.sv.utils.LogUtil;
 
 public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
@@ -7,6 +8,13 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 	private CoreThread coreThread = null;
 	private CoreListener coreListener = null;
 	
+	private Context mContext;
+	
+	public CoreApi(Context mContext) {
+		super();
+		this.mContext = mContext;
+	}
+
 	public void setListener(CoreListener listener) {
 		this.coreListener = listener;
 	}
@@ -28,8 +36,10 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 			LogUtil.warn("coreThread already exists.");
 			return true;
 		}
-		coreThread = new CoreThread();
+		coreThread = new CoreThread(mContext);
 		coreThread.setListener(coreListener);
+	
+		
 		try {
 			new Thread(coreThread).start();
 		} catch(IllegalThreadStateException e) {
@@ -77,4 +87,5 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 			coreListener = null;
 		}
 	}
+	
 }

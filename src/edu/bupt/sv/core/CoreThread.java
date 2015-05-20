@@ -1,13 +1,28 @@
 package edu.bupt.sv.core;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.bupt.sv.control.VehicleController;
+import edu.bupt.sv.entity.Link;
+import edu.bupt.sv.entity.LinkRelation;
+import edu.bupt.sv.entity.Node;
+import edu.bupt.sv.entity.Vehicle;
 import edu.bupt.sv.service.TMAccessor;
+import edu.bupt.sv.utils.CommonUtil;
+import edu.bupt.sv.utils.InitLink;
 import edu.bupt.sv.utils.LogUtil;
+import android.R;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
+import android.util.SparseArray;
 
 public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 
@@ -15,11 +30,17 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	private CoreListener coreListener = null;
 	private Handler mHandler;
 	
+	private Context mContext;
+	
 	private VehicleController vehicleController;
 	private TMAccessor tmAccessor;
 	
-	public CoreThread() {
+	private InitLink initLink;
+	
+
+	public CoreThread(Context mContext) {
 		super();
+		this.mContext = mContext;
 	}
 
 	public boolean isThreadRunning() {
@@ -57,6 +78,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	
 	@Override
 	public void run() {
+		initLink = new InitLink(mContext);
+		initLink.initMapData();
+		System.out.println("my next linkid is"+getTurnLink(3221526,1));
 		isRunning = true;
         Looper.prepare();
 
@@ -92,7 +116,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			break;
 		case MSG_ON_QUIT:
 			handleOnQuit();
-			break;
+			break;			
 		}
 	}
 	
@@ -160,4 +184,13 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			break;
 		}
 	}
+	
+	
+	public Integer getTurnLink(int id,int direction){
+		
+		Integer[] data = ((LinkRelation) initLink.linkRelation.get(id)).getNextlinks();
+		System.out.println("#####" + data[direction]);
+		return data[direction];
+	}
+	
 }
