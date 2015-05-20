@@ -1,17 +1,13 @@
 package edu.bupt.sv.test;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import edu.bupt.sv.core.CoreApi;
 import edu.bupt.sv.core.CoreListener;
-import edu.bupt.sv.utils.LogUtil;
+import edu.bupt.sv.entity.Point;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -34,21 +30,36 @@ public class TestActivity extends Activity {
 				System.out.println("Vehicle id: " + vehicleIds.get(i));
 			}
 		}
-		
+
 		@Override
-		public void onPathChanged() {}
-		
+		public void onLocationChanged(Point newPoint) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		@Override
-		public void onLocationChanged(double latitude, double longitude) {}
-		
+		public void onChargedChanged(double charge) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		@Override
-		public void onError(int errorCode) {}
-		
+		public void onPathChanged(List<Point> paths) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		@Override
-		public void onDestChanged(double destLat, double destLng) {}
-		
+		public void onDestChanged(Point newDest, List<Point> paths) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		@Override
-		public void onChargedChanged(double charge) {}
+		public void onError(int errorCode) {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 	
 	private OnClickListener listener = new OnClickListener() {
@@ -93,12 +104,5 @@ public class TestActivity extends Activity {
 		quitBtn.setOnClickListener(listener);
 		//test
 		init();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.test, menu);
-		return true;
 	}
 }

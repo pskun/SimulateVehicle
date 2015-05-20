@@ -26,8 +26,12 @@ public interface MsgConstants {
 	// 销毁并退出
 	public static final int MSG_ON_QUIT	= 10;
 	
+	// 错误数据
+	public static final int DATA_ERROR = 0;
 	// 车辆列表数据标识
 	public static final int DATA_VEHICLE_LIST = 1;
 	// 车辆订阅数据标识
 	public static final int DATA_VEHICLE_INFO = 2;
+	// 路径规划数据标识
+	public static final int DATA_PATH_PLAN = 3;
 }

@@ -13,12 +13,17 @@ import android.os.Handler;
 
 public class TMAccessor implements NetworkConstants, MsgConstants {
 
-	public TMMessageHandler tmMsgHandler = null;
+	private TMMessageHandler tmMsgHandler = null;
 	private Handler coreHandler;
+	private Handler jobHandler;
+	
 	private int nextVehicleListSendId;
 	private int nextInitVehicleSendId;
+	private int nextChangeDestSendId;
 
-	public TMListener tmListener = new TMListener() {
+	private boolean isTempChangeDest = false;
+	
+	private TMListener tmListener = new TMListener() {
 		@Override
 		public void onReceiveNTY(final int ID, NTYMessage NTY) {
 			LogUtil.verbose("tm on receive data, ID: " + ID);
@@ -26,6 +31,13 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 				handleVehicleListNTY(NTY);
 			} else if (ID == nextInitVehicleSendId) {
 				handleInitVehicleNTY(NTY);
+			} else if (ID == nextChangeDestSendId) {
+				if(checkResponseCode(NTY.NTY.Code)) {
+					jobHandler.obtainMessage(MSG_CHANGE_DEST, new Boolean(isTempChangeDest)).sendToTarget();
+				}
+				else {
+					jobHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
+				}
 			}
 		}
 	};
@@ -44,6 +56,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		tmMsgHandler = new TMMessageHandler(tmListener);
 		nextVehicleListSendId = -1;
 		nextInitVehicleSendId = -1;
+		nextChangeDestSendId = -1;
 		LogUtil.verbose("tmAccessor: initialize tmAccessor done.");
 	}
 
@@ -54,6 +67,10 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		}
 		nextVehicleListSendId = -1;
 		nextInitVehicleSendId = -1;
+	}
+	
+	public void setJobHandler(Handler jobHandler) {
+		this.jobHandler = jobHandler;
 	}
 	
 	public boolean requestAllVehicle() {
@@ -78,11 +95,28 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		}
 		List<Integer> vi = new ArrayList<Integer>();
 		vi.add(vehicleId);
-		nextInitVehicleSendId = tmMsgHandler.sendSubVehicleInfo(vi);
+		nextInitVehicleSendId = tmMsgHandler.sendSubVehicleConstantly(vi);
 		LogUtil.verbose("TMAccessor: message of requestAllVehicle was sent, id: " + nextInitVehicleSendId);
 		return true;
 	}
 
+	public boolean requestChangeDest(Integer vehicleId, List<Integer> links, boolean isTemporary) {
+		this.isTempChangeDest = isTemporary;
+		if (tmMsgHandler == null) {
+			LogUtil.error("requestChangeDest: tmMsgHanlder is null.");
+			return false;
+		}
+		if (vehicleId == null) {
+			LogUtil.error("requestChangeDest: vehicle id is null.");
+			return false;
+		}
+		List<Integer> vi = new ArrayList<Integer>();
+		vi.add(vehicleId);
+		nextChangeDestSendId = tmMsgHandler.sendChangeDst(vi, links);
+		LogUtil.verbose("TMAccessor: message of requestChangeDest was sent, id: " + nextChangeDestSendId);
+		return true;
+	}
+	
 	private boolean checkResponseCode(int code) {
 		LogUtil.verbose("respond code: " + code);
 		// ÅÐ¶ÏÏìÓ¦Âë
