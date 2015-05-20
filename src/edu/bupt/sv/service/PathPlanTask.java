@@ -1,6 +1,8 @@
 package edu.bupt.sv.service;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import edu.bupt.sv.core.MsgConstants;
 import edu.bupt.sv.entity.PathInfo;
@@ -19,6 +21,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	private TMAccessor tmAccessor;
 	private PlatformAccessor pfAccessor;
 	
+	
 	private Integer vehicleId;
 	private List<Integer> tempLinks;
 	private Point startPoint;
@@ -29,8 +32,24 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	
 	private PathInfo pathInfo = null;
 	
-	public void startTask() {
-		new Thread(this).start();
+	private ExecutorService threadPool = Executors.newSingleThreadExecutor();
+	
+	public PathPlanTask(Handler coreHandler, TMAccessor tmAccessor) {
+		super();
+		this.coreHandler = coreHandler;
+		this.tmAccessor = tmAccessor;
+	}
+
+	public void startTask(Point startPoint, Point destPoint) {
+		// 初始化
+		tempDestChangeACK = false;
+		finalDestChangeACK = false;
+		tempLinks = null;
+		// 设置起点和终点
+		this.startPoint = startPoint;
+		this.destPoint = destPoint;
+		// 开始规划
+		threadPool.execute(this);
 	}
 	
 	@Override
@@ -65,8 +84,8 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	}
 	
 	private void handleStartPlan() {
-		// 告知TM临时终点
 		tmAccessor.setJobHandler(mLocalHandler);
+		// 告知TM临时终点
 		tmAccessor.requestChangeDest(vehicleId, tempLinks, true);
 		// 进行路径规划
 		pfAccessor.planPath(startPoint.latitude, startPoint.longitude, destPoint.latitude, destPoint.longitude);

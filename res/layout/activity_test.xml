@@ -9,20 +9,37 @@
     tools:context="edu.bupt.iov.TestActivity" >
 
     <Button
-        android:id="@+id/vehicle_list_btn"
+        android:id="@+id/init_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/vehicle_list_btn"
+        android:text="初始化" />
+
+    <Button
+        android:id="@+id/vehicle_list_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/init_btn"
         android:text="获取车辆列表" />
+
+    <Button
+        android:id="@+id/sub_vehicle_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/vehicle_list_btn"
+        android:layout_below="@+id/vehicle_list_btn"
+        android:text="订阅车辆信息" />
 
     <Button
         android:id="@+id/quit_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/vehicle_list_btn"
-        android:layout_alignRight="@+id/vehicle_list_btn"
-        android:layout_below="@+id/vehicle_list_btn"
+        android:layout_alignLeft="@+id/sub_vehicle_btn"
+        android:layout_alignRight="@+id/sub_vehicle_btn"
+        android:layout_below="@+id/sub_vehicle_btn"
         android:text="退出" />
 
 </RelativeLayout>

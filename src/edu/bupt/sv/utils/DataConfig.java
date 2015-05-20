@@ -13,6 +13,7 @@ import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Vehicle;
 
 public class DataConfig {
+	
 	private static final String LINK_INFO_FILE = "linkinfo.txt";
 	private static final String NODE_INFO_FILE = "nodeinfo.txt";
 	private static final String LINK_RELATION_FILE = "linkrelation.txt";
@@ -22,7 +23,7 @@ public class DataConfig {
 
 	private SparseArray<Link> linkInfo = new SparseArray<Link>();
 	private SparseArray<Node> nodeInfo = new SparseArray<Node>();
-	private SparseArray<LinkRelation> linkRelation = new SparseArray<LinkRelation>();
+	private SparseArray<LinkRelation> linkRelations = new SparseArray<LinkRelation>();
 	private SparseArray<Vehicle> vehicleList = new SparseArray<Vehicle>();
 
 	public DataConfig(Context mContext) {
@@ -31,7 +32,11 @@ public class DataConfig {
 	}
 
 	public boolean initAll() {
-		if(!initMapData()) return false;
+		LogUtil.verbose("init data config.");
+		LogUtil.verbose("begin to init map data");
+		if(!initMapData())
+			return false;
+		LogUtil.verbose("begin to init vehicle data");
 		return initVehicleData();
 	}
 	
@@ -43,10 +48,23 @@ public class DataConfig {
 		return vehicleList;
 	}
 
+	public Vehicle getVehicleFromConfig(Integer vehicleId) {
+		if(vehicleList == null)
+			return null;
+		return vehicleList.get(vehicleId.intValue());
+	}
+	
+	public Integer getTurnLink(Integer curLinkId, int direction) {
+		LinkRelation relation = linkRelations.get(curLinkId);
+		if(relation == null)
+			return null;
+		return relation.getNextLink(direction);
+	}
+	
 	private boolean initMapData() {
 		try {
 			if(!initNode()) return false;
-			if(initRelation()) return false;
+			if(!initRelation()) return false;
 			InputStreamReader in = new InputStreamReader(mContext
 					.getResources().getAssets().open(LINK_INFO_FILE));
 			BufferedReader bufReader = new BufferedReader(in);
@@ -120,7 +138,7 @@ public class DataConfig {
 					}
 				}
 				LinkRelation linkrelation = new LinkRelation(id, nextlinks);
-				linkRelation.append(linkrelation.getId(), linkrelation);
+				linkRelations.append(linkrelation.getId(), linkrelation);
 				line = bufReader.readLine();
 			}
 		} catch (Exception e) {
@@ -162,6 +180,7 @@ public class DataConfig {
 				Vehicle vehicle = new Vehicle(id, startPos, endPos, linkID,
 						status, model, energyCost, totalEnergy, charge,
 						reservedEnergy, speed, path);
+				System.out.print("Vehicle id: " + id);
 				vehicleList.append(vehicle.getId(), vehicle);
 				line = bufReader.readLine();
 			}

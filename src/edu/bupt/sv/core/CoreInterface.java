@@ -8,7 +8,7 @@ public interface CoreInterface {
 	
 	public boolean initVehicle(Integer vehicleId);
 	
-	public boolean turnNewPath();
+	public boolean turnNewPath(int direction);
 	
 	public void changeDestination();
 	

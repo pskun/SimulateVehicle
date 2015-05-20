@@ -1,10 +1,10 @@
 package edu.bupt.sv.entity;
 
-public class LinkRelation {
+public class LinkRelation implements EntityConstants {
+	// 当前的linkID
 	private Integer id;
 	//0，1，2分别为直行，左转，右转，没有，则为空
 	private Integer[] nextlinks;
-	
 	
 	public LinkRelation(Integer id, Integer[] nextlinks) {
 		super();
@@ -26,5 +26,7 @@ public class LinkRelation {
 		this.nextlinks = nextlinks;
 	}
 	
-
+	public Integer getNextLink(int direction) {
+		return nextlinks[direction];
+	}
 }

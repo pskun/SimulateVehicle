@@ -5,9 +5,12 @@ import java.util.List;
 import edu.bupt.sv.control.VehicleController;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.SubInfo;
+import edu.bupt.sv.entity.Vehicle;
+import edu.bupt.sv.service.PathPlanTask;
 import edu.bupt.sv.service.TMAccessor;
 import edu.bupt.sv.utils.DataConfig;
 import edu.bupt.sv.utils.LogUtil;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,6 +26,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	private VehicleController vehicleController;
 	private TMAccessor tmAccessor;
 	private DataConfig dataConfig;
+	
+	// 任务对象
+	private PathPlanTask ppTask;
 	
 	public CoreThread(Context context) {
 		super();
@@ -93,6 +99,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		case MSG_INIT_VEHICLE:
 			handleInitVehicle((Integer) msg.obj);
 			break;
+		case MSG_PATH_PLAN:
+			handlePathPlan((Integer) msg.obj);
+			break;
 		case MSG_ON_RECEIVE:
 			handleReceiveData(msg.arg1, msg.obj);
 			break;
@@ -149,15 +158,25 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		}
 	}
 	
+	/**
+	 * 初始化车辆并向TM订阅车辆信息
+	 * @param vehicleId
+	 */
 	private void handleInitVehicle(Integer vehicleId) {
 		// 从vehicleList中选一个
-		// TODO
-		if(tmAccessor != null) {
-			boolean ret = tmAccessor.requestInitVehicle(vehicleId);
-			if(!ret && coreListener != null) {
-				coreListener.onError(ERROR_INIT_VEHICLE);
-			}
+		Vehicle v = dataConfig.getVehicleFromConfig(vehicleId);
+		if(v==null)
+			LogUtil.error("aaaaaaaaaaaaa");
+		vehicleController.setVehicle(v);
+		// 订阅车辆信息
+		boolean ret = tmAccessor.requestInitVehicle(vehicleId);
+		if(!ret && coreListener != null) {
+			coreListener.onError(ERROR_INIT_VEHICLE);
 		}
+	}
+	
+	private void handlePathPlan(Integer direction) {
+		//
 	}
 	
 	private void onReceiveSubInfoData(SubInfo subInfo) {
