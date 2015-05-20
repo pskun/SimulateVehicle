@@ -21,7 +21,8 @@ public class TestActivity extends Activity {
 	
 	private CoreApi api;
 	
-	//aaaa
+	// aaaa
+	// bbbb
 	
 	private CoreListener coreListener = new CoreListener() {
 		
