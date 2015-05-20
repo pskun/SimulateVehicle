@@ -38,8 +38,7 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 		}
 		coreThread = new CoreThread(mContext);
 		coreThread.setListener(coreListener);
-	
-		
+
 		try {
 			new Thread(coreThread).start();
 		} catch(IllegalThreadStateException e) {

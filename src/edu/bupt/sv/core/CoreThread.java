@@ -6,6 +6,7 @@ import edu.bupt.sv.control.VehicleController;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.SubInfo;
 import edu.bupt.sv.service.TMAccessor;
+import edu.bupt.sv.utils.DataConfig;
 import edu.bupt.sv.utils.LogUtil;
 import android.content.Context;
 import android.os.Handler;
@@ -21,6 +22,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	
 	private VehicleController vehicleController;
 	private TMAccessor tmAccessor;
+	private DataConfig dataConfig;
 	
 	public CoreThread(Context context) {
 		super();
@@ -111,6 +113,15 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		if (null == tmAccessor) {
 			tmAccessor = new TMAccessor(mHandler);
 			tmAccessor.init();
+		} else {
+			LogUtil.warn("tmAccessor already exists");
+		}
+		if (null == dataConfig) {
+			dataConfig = new DataConfig(mContext);
+			if(!dataConfig.initAll()) {
+				mHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
+				return;
+			}
 		}
 		LogUtil.verbose("coreThread is now initialized.");
 	}

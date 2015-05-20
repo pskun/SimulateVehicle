@@ -1,5 +1,6 @@
 package edu.bupt.sv.entity;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Vehicle {
 	private Integer id;
@@ -17,7 +18,7 @@ public class Vehicle {
 	private Double charge;
 	private Double reservedEnergy;
 	private Double speed;
-	private ArrayList path;	
+	private List<Integer> path;	
 	// ¾­¶È
 	private double longitude;
 	// Î³¶È
@@ -28,7 +29,7 @@ public class Vehicle {
 	public Vehicle(Integer id, Integer startPos, Integer endPos,
 			Integer linkID, Integer status, Integer model, Double energyCost,
 			Double totalEnergy, Double charge, Double reservedEnergy,
-			Double speed, ArrayList path) {
+			Double speed, List<Integer> path) {
 		super();
 		this.id = id;
 		this.startPos = startPos;
@@ -113,10 +114,10 @@ public class Vehicle {
 	public void setSpeed(Double speed) {
 		this.speed = speed;
 	}
-	public ArrayList getPath() {
+	public List<Integer> getPath() {
 		return path;
 	}
-	public void setPath(ArrayList path) {
+	public void setPath(List<Integer> path) {
 		this.path = path;
 	}
 	public double getLongitude() {

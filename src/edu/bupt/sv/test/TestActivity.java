@@ -79,7 +79,7 @@ public class TestActivity extends Activity {
 	};
 	
 	private void init() {
-		api = new CoreApi(this);
+		api = new CoreApi(mContext);
 		api.setListener(coreListener);
 		api.initApi();
 	}
@@ -96,6 +96,8 @@ public class TestActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_test);
+		
+		this.mContext = this.getApplicationContext();
 		
 		vehicleListBtn = (Button) findViewById(R.id.vehicle_list_btn);
 		vehicleListBtn.setOnClickListener(listener);
