@@ -35,6 +35,14 @@ public class DataConfig {
 		return initVehicleData();
 	}
 	
+	public SparseArray<Node> getNodeInfo() {
+		return nodeInfo;
+	}
+
+	public SparseArray<Vehicle> getVehicleList() {
+		return vehicleList;
+	}
+
 	private boolean initMapData() {
 		try {
 			if(!initNode()) return false;

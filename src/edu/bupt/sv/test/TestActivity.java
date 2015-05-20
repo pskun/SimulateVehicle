@@ -4,10 +4,13 @@ import java.util.List;
 
 import edu.bupt.sv.core.CoreApi;
 import edu.bupt.sv.core.CoreListener;
+import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
+import edu.bupt.sv.entity.Vehicle;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -63,6 +66,14 @@ public class TestActivity extends Activity {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void onInitFinish(SparseArray<Node> nodes,
+				SparseArray<Vehicle> vehicles) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	};
 	
 	private OnClickListener listener = new OnClickListener() {

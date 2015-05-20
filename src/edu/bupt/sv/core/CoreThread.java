@@ -122,6 +122,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 				mHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
 				return;
 			}
+			if (null != coreListener) {
+				coreListener.onInitFinish(dataConfig.getNodeInfo(), dataConfig.getVehicleList());
+			}
 		}
 		LogUtil.verbose("coreThread is now initialized.");
 	}

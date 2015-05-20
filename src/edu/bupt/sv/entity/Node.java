@@ -1,11 +1,11 @@
 package edu.bupt.sv.entity;
 
-import android.R.integer;
-
 public class Node {
+	
 	private Integer id;
 	private double latitude;
 	private double longitude;
+	
 	public Node(Integer id, double latitude, double longitude) {
 		super();
 		this.id = id;
