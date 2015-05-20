@@ -21,6 +21,8 @@ public class TestActivity extends Activity {
 	
 	private CoreApi api;
 	
+	//aaaa
+	
 	private CoreListener coreListener = new CoreListener() {
 		
 		@Override
