@@ -20,11 +20,13 @@ public class TestActivity extends Activity {
 	
 	private Button vehicleListBtn;
 	private Button quitBtn;
+	private Button subVehicleBtn;
+	private Button initBtn;
 
 	private Context mContext;
 	private CoreApi api;
 	
-	
+
 	private CoreListener coreListener = new CoreListener() {
 		
 		@Override
@@ -37,14 +39,12 @@ public class TestActivity extends Activity {
 
 		@Override
 		public void onLocationChanged(Point newPoint) {
-			// TODO Auto-generated method stub
-			
+			System.out.println("Current Location: " + newPoint.latitude + " " + newPoint.longitude);
 		}
 
 		@Override
 		public void onChargedChanged(double charge) {
-			// TODO Auto-generated method stub
-			
+			System.out.println("Current charge: " + charge);
 		}
 
 		@Override
@@ -82,11 +82,17 @@ public class TestActivity extends Activity {
 			int clickId = v.getId();
 			switch(clickId)
 			{
+			case R.id.init_btn:
+				init();
+				break;
 			case R.id.vehicle_list_btn:
 				requestVehicleList();
 				break;
 			case R.id.quit_btn:
 				quit();
+				break;
+			case R.id.sub_vehicle_btn:
+				subVehicleInfo(1);
 				break;
 			}
 		}
@@ -102,6 +108,10 @@ public class TestActivity extends Activity {
 		api.requestVehicleList();
 	}
 	
+	private void subVehicleInfo(Integer vehicleId) {
+		api.initVehicle(vehicleId);
+	}
+	
 	private void quit() {
 		api.destroyApi();
 	}
@@ -113,12 +123,17 @@ public class TestActivity extends Activity {
 		
 		this.mContext = this.getApplicationContext();
 		
+		initBtn = (Button) findViewById(R.id.init_btn);
+		initBtn.setOnClickListener(listener);
+		
 		vehicleListBtn = (Button) findViewById(R.id.vehicle_list_btn);
 		vehicleListBtn.setOnClickListener(listener);
 		
 		quitBtn = (Button) findViewById(R.id.quit_btn);
 		quitBtn.setOnClickListener(listener);
-		//test
-		init();
+		
+		subVehicleBtn = (Button) findViewById(R.id.sub_vehicle_btn);
+		subVehicleBtn.setOnClickListener(listener);
+		
 	}
 }

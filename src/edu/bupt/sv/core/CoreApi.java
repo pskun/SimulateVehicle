@@ -50,15 +50,18 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 	
 	@Override
 	public boolean initVehicle(Integer vehicleId) {
-		if(isThreadValid())
-			coreThread.sendMessage(MSG_INIT_VEHICLE, vehicleId);
+		if(!isThreadValid())
+			return false;
+		coreThread.sendMessage(MSG_INIT_VEHICLE, vehicleId);
 		return true;
 	}
 
 	@Override
-	public boolean turnNewPath() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean turnNewPath(int direction) {
+		if(!isThreadValid())
+			return false;
+		coreThread.sendMessage(MSG_PATH_PLAN, Integer.valueOf(direction));
+		return true;
 	}
 
 	@Override
