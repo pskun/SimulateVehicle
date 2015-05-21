@@ -9,4 +9,6 @@ public interface ErrorConstants {
 	public static final int ERROR_REQUEST_VEHICLE_LIST = 3;
 	
 	public static final int ERROR_INIT_VEHICLE = 4;
+	
+	public static final int ERROR_NULL_POINTER = 5;
 }

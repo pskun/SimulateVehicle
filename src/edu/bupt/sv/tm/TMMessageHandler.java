@@ -148,6 +148,7 @@ public class TMMessageHandler implements NetworkConstants {
 
 		if (client != null) {
 			try {
+				client.closeReceive();
 				client.socket.close();
 			} catch (IOException e) {
 				e.printStackTrace();

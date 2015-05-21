@@ -40,11 +40,11 @@ public class PathPlanTask implements Runnable, MsgConstants {
 		this.tmAccessor = tmAccessor;
 	}
 
-	public void startTask(Point startPoint, Point destPoint) {
+	public void startTask(Point startPoint, Point destPoint, List<Integer> tempLinks) {
 		// 初始化
 		tempDestChangeACK = false;
 		finalDestChangeACK = false;
-		tempLinks = null;
+		this.tempLinks = tempLinks;
 		// 设置起点和终点
 		this.startPoint = startPoint;
 		this.destPoint = destPoint;
@@ -66,7 +66,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 		Looper.loop();
 	}
 
-	public void handleLocalMessage(Message msg) {
+	private void handleLocalMessage(Message msg) {
 		switch(msg.what) {
 		case LOCAL_MSG_START_PLAN:
 			handleStartPlan();

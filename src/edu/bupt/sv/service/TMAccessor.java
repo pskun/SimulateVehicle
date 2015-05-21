@@ -153,14 +153,21 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 			return;
 		// 响应成功的处理
 		SubInfo info = new SubInfo();
+		// 经纬度
 		if(NTY.NTY.Lad != null)
 			info.latitude = NTY.NTY.Lad.get(0);
 		if(NTY.NTY.Longd != null)
 			info.longitude = NTY.NTY.Longd.get(0);
+		// 速度
 		if(NTY.NTY.Speed != null)
 			info.speed = NTY.NTY.Speed.get(0);
+		// 当前电量
 		if(NTY.NTY.Elec != null)
 			info.currentCharge = NTY.NTY.Elec.get(0);
+		// 当前linkid
+		if(NTY.NTY.Link != null) {
+			info.linkId = NTY.NTY.Link.get(0);
+		}
 		if(coreHandler != null) {
 			coreHandler.obtainMessage(MSG_ON_RECEIVE, DATA_VEHICLE_INFO, -1, info).sendToTarget();
 		}

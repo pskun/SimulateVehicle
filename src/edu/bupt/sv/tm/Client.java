@@ -61,7 +61,7 @@ class ClientInput extends Thread {
 		{
 			e.printStackTrace();
 			_client.closeReceive();
-			_client.notifyAll();
+			//_client.notifyAll();
 		}
 	}
 }
@@ -84,7 +84,6 @@ public class Client {
 	public Client (String host, int port) throws IOException {
 		try{
 			this.socket = new Socket();
-			//socket.setSoTimeout(5000);
 			socket.connect(new InetSocketAddress(host, port));
 			ci = new ClientInput(this);
 			ci.start();
@@ -95,7 +94,7 @@ public class Client {
 		}
 	}
 	
-	public Client() throws IOException{
+	public Client() throws IOException {
 		this.socket = new Socket("127.0.0.1", 8888);
 		ci = new ClientInput(this);
 		ci.start();
@@ -167,8 +166,14 @@ public class Client {
 		return ret_msg;
 	}
 	
-	public void closeReceive (){
+	public void closeReceive() {
 		isValid = false;
+	}
+	
+	public void closeClient() {
+		if(ci != null) {
+			ci.interrupt();
+		}
 	}
 	
 	public static void main(String[] args) throws Exception{

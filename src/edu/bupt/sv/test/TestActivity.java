@@ -47,7 +47,7 @@ public class TestActivity extends Activity {
 		}
 
 		@Override
-		public void onPathChanged(List<Point> paths) {
+		public void onPathChanged(boolean success, List<Point> paths) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -89,7 +89,7 @@ public class TestActivity extends Activity {
 				quit();
 				break;
 			case R.id.sub_vehicle_btn:
-				subVehicleInfo(1);
+				subVehicleInfo(10);
 				break;
 			}
 		}
