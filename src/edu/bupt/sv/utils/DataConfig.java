@@ -32,11 +32,16 @@ public class DataConfig {
 	}
 
 	public boolean initAll() {
+
+		
+		if(!initMapData()) return false;
+
 		LogUtil.verbose("init data config.");
 		LogUtil.verbose("begin to init map data");
 		if(!initMapData())
 			return false;
 		LogUtil.verbose("begin to init vehicle data");
+
 		return initVehicleData();
 	}
 	
@@ -63,8 +68,15 @@ public class DataConfig {
 	
 	private boolean initMapData() {
 		try {
+			System.out.println("7");
 			if(!initNode()) return false;
+
+			System.out.println("55555555");
 			if(!initRelation()) return false;
+			System.out.println("66666");
+
+			if(!initRelation()) return false;
+
 			InputStreamReader in = new InputStreamReader(mContext
 					.getResources().getAssets().open(LINK_INFO_FILE));
 			BufferedReader bufReader = new BufferedReader(in);
@@ -174,7 +186,7 @@ public class DataConfig {
 				for (int i = 0; i < split1.length; i++) {
 					path.add(Integer.parseInt(split1[i]));
 				}
-				// 都走不存储的暂停点
+				// 读走不存储的暂停点
 				line = bufReader.readLine();
 
 				Vehicle vehicle = new Vehicle(id, startPos, endPos, linkID,

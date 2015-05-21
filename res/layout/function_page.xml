@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+     <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+       >     
+      <TextView 
+        android:id="@+id/vehicleid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="车辆ID：1"
+        android:layout_weight="1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+       />
+       <TextView 
+           android:id="@+id/battery"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:text="剩余电量：50%"
+        />
+         <TextView 
+           android:id="@+id/route"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:text="当前路段：1"
+         />
+      </LinearLayout>
+      
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:orientation="horizontal"
+       >     
+      <TextView 
+           android:id="@+id/longitude"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:text="经度：100"  
+           android:layout_weight="1"
+           android:layout_alignParentLeft="true"
+           android:layout_alignParentTop="true"
+        />
+      
+       <TextView 
+           android:id="@+id/latitude"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:text="纬度：100"
+           android:layout_weight="1"
+        />
+       <TextView 
+           android:id="@+id/speed"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:text="当前速度：50"
+           android:layout_weight="1"
+           />
+      </LinearLayout>
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_alignParentLeft="true" 
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        />
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom = "true"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+       >
+
+    <RelativeLayout
+           android:layout_width="fill_parent"
+           android:layout_height="fill_parent"
+           android:layout_weight="1"
+           android:orientation="vertical" >
+ 
+  <RadioGroup android:id="@+id/radioGroup" 
+              android:contentDescription="服务策略" 
+              android:layout_width="wrap_content" 
+              android:layout_height="wrap_content"
+              android:layout_alignParentBottom="true"
+              >
+
+     <RadioButton
+         android:id="@+id/radioMale"
+         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
+         android:checked="true"
+         android:text="时间最短"
+          >
+      </RadioButton>    
+
+      <RadioButton
+          android:id="@+id/radioFemale"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:text="路径最短"        
+           >
+
+        </RadioButton> 
+   </RadioGroup>
+  </RelativeLayout>
+       <edu.bupt.sv.view.DirectionView
+           android:id="@+id/cv"
+           android:layout_width="fill_parent"
+           android:layout_height="match_parent"
+           android:layout_gravity="bottom"
+           android:layout_weight="1" />
+        <Button
+           android:id="@+id/buttonservice"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_gravity="bottom"
+           android:layout_weight="1"
+           android:text="服务" /> 
+   </LinearLayout>
+</LinearLayout>

@@ -83,6 +83,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
         };
         
         sendMessage(MSG_INIT_THREAD);
+        System.out.println("44444444");
         Looper.loop();
 	}
 
@@ -121,12 +122,14 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		} else {
 			LogUtil.warn("tmAccessor already exists.");
 		}
+		System.out.println("7888888");
 		if (null == dataConfig) {
 			dataConfig = new DataConfig(mContext);
 			if(!dataConfig.initAll()) {
 				mHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
 				return;
 			}
+			
 			if (null != coreListener) {
 				coreListener.onInitFinish(dataConfig.getNodeInfo(), dataConfig.getVehicleList());
 			}
