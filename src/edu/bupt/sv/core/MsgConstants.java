@@ -25,6 +25,7 @@ public interface MsgConstants {
 	public static final int MSG_ON_RECEIVE = 9;
 	// 销毁并退出
 	public static final int MSG_ON_QUIT	= 10;
+
 	
 	// 错误数据
 	public static final int DATA_ERROR = 0;

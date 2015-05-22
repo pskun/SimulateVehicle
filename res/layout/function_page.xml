@@ -116,7 +116,7 @@
         </RadioButton> 
    </RadioGroup>
   </RelativeLayout>
-       <edu.bupt.sv.view.DirectionView
+       <edu.bupt.sv.ui.DirectionView
            android:id="@+id/cv"
            android:layout_width="fill_parent"
            android:layout_height="match_parent"

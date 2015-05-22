@@ -68,12 +68,10 @@ public class DataConfig {
 	
 	private boolean initMapData() {
 		try {
-			System.out.println("7");
 			if(!initNode()) return false;
 
-			System.out.println("55555555");
 			if(!initRelation()) return false;
-			System.out.println("66666");
+
 
 			if(!initRelation()) return false;
 

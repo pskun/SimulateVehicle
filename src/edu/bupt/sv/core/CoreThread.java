@@ -82,7 +82,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
         };
         
         sendMessage(MSG_INIT_THREAD);
-        System.out.println("44444444");
+        
         Looper.loop();
 	}
 

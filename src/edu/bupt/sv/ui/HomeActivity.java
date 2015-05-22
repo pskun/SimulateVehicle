@@ -10,14 +10,20 @@ import edu.bupt.sv.core.CoreListener;
 import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.Vehicle;
+import edu.bupt.sv.utils.LogUtil;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -27,6 +33,7 @@ public class HomeActivity extends Activity {
 	
 	private Context mContext;
 	private CoreApi api;
+	private Handler myHandler;
 	
 	private CoreListener coreListener = new CoreListener() {
 		
@@ -71,23 +78,21 @@ public class HomeActivity extends Activity {
 		@Override
 		public void onInitFinish(SparseArray<Node> nodes,
 				SparseArray<Vehicle> vehicles) {
-			// TODO Auto-generated method stub
-			loadInfo(vehicles);		
+			// TODO Auto-generated method stub		
+			sendMessage(1, vehicles);
 		}
 		
 	};
 	
-	private OnClickListener listener = new OnClickListener() {
+	private OnItemClickListener  listener = new OnItemClickListener()  {
+
 		@Override
-		public void onClick(View v) {
-			int clickId = v.getId();
-			switch(clickId)
-			{
-			case R.id.mylist:
-				clickList();					
-				break;
-			 
-			}
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			// TODO Auto-generated method stub
+			clickList(view);
+			//System.out.println("111111111111111111"+position);
+             		
 		}
 	};
 	
@@ -95,8 +100,25 @@ public class HomeActivity extends Activity {
 		api = new CoreApi(mContext);
 		api.setListener(coreListener);
 		api.initApi();
-		System.out.println("3333333");
 	}
+	
+	
+	public void sendMessage(int msgCode) {
+		if(myHandler == null) {
+			LogUtil.warn("uiThread handler is null. Unable to send message.");
+			return;
+		}
+		myHandler.obtainMessage(msgCode).sendToTarget();
+	}
+	
+	public void sendMessage(int msgCode, Object object) {
+		if(myHandler == null) {
+			LogUtil.warn("uiThread handler is null. Unable to send message.");
+			return;
+		}
+		myHandler.obtainMessage(msgCode, object).sendToTarget();
+	}
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,9 +126,20 @@ public class HomeActivity extends Activity {
 		
 		setContentView(R.layout.home_page);
 		
-		
 		this.mContext = this.getApplicationContext();
 		//加载放在onInitFinish中进行
+		myHandler =new Handler(){
+			   @Override
+	            public void handleMessage(Message msg) {
+	                super.handleMessage(msg);
+	                switch(msg.what)
+	        		{
+	        		case  1 :
+	        			loadInfo((SparseArray<Vehicle>) msg.obj);
+	        			break;
+	        		}
+	            }
+		};
 		init();
 	}
 	
@@ -119,8 +152,8 @@ public class HomeActivity extends Activity {
 			listItem.put("header",imageIds[0]);
 			listItem.put("vehicleId","车辆ID:　"+i);
 			Vehicle curVehicle = vehicles.get(i);
-			listItem.put("desc","车辆型号："+curVehicle.getModel()+ "  总电量 ：" + curVehicle.getTotalEnergy()
-					+ "\n剩余电量" +curVehicle.getCharge() + "  运行速度"+ curVehicle.getSpeed());
+			listItem.put("desc","车辆型号："+curVehicle.getModel()+ "\n总电量 ：" + curVehicle.getTotalEnergy()
+					+ "\n剩余电量" +curVehicle.getCharge() + "\n运行速度"+ curVehicle.getSpeed());
 			listItems.add(listItem);
 		}
 		
@@ -131,14 +164,15 @@ public class HomeActivity extends Activity {
 		
 		vehicleList = (ListView) findViewById(R.id.mylist);
 		vehicleList.setAdapter(simpleAdapter);
-		vehicleList.setOnClickListener(listener);
+		vehicleList.setOnItemClickListener(listener);
 		
 	}
-	public void clickList (){
+	public void clickList (View view){
 		Intent intent = new Intent();
-    	intent.setClassName(this, "edu.bupt.sv.ui.FunctionPage");
+    	intent.setClassName(this, "edu.bupt.sv.ui.FunctionActivity");
     	startActivity(intent);
 	}
 	
+
 
 }

@@ -28,15 +28,14 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.function_page);
-        ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
         
+        ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
         
         final  Button moreMenu = (Button)this.findViewById(R.id.buttonservice);
         moreMenu.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View moreMenu){
                    PopupMenu popup = new PopupMenu(FunctionActivity.this, moreMenu);
-                    //Inflating the Popup using xml file
                     popup.getMenuInflater()
                         .inflate(R.layout.service_menu, popup.getMenu());
  
@@ -56,8 +55,8 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	@Override
 	public void onMapReady(GoogleMap map) {
       
-		//System.out.println("123");
-		Marker nkut = map.addMarker(new MarkerOptions().position(NKUT).title("南開科技大學").snippet("數位生活創意系"));
+	  
+	  Marker nkut = map.addMarker(new MarkerOptions().position(NKUT).title("南開科技大學").snippet("數位生活創意系"));
 
       // Move the camera instantly to NKUT with a zoom of 16.
       map.moveCamera(CameraUpdateFactory.newLatLngZoom(NKUT, 16));
