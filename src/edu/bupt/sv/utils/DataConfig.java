@@ -37,16 +37,14 @@ public class DataConfig {
 	// µ¥ÀýÄ£Ê½
 	private static DataConfig instance = null;
 	public static DataConfig getInstance(Context ctx) {
-		if(instance == null)
+		if(instance == null) {
 			instance = new DataConfig(ctx);
+			instance.initAll();
+		}
 		return instance;
 	}
 	
-	public boolean initAll() {
-
-		
-		if(!initMapData()) return false;
-
+	private boolean initAll() {
 		LogUtil.verbose("init data config.");
 		LogUtil.verbose("begin to init map data");
 		if(!initMapData())
