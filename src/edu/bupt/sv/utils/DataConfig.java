@@ -5,11 +5,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import android.content.Context;
 import android.util.SparseArray;
 import edu.bupt.sv.entity.Link;
 import edu.bupt.sv.entity.LinkRelation;
 import edu.bupt.sv.entity.Node;
+import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.Vehicle;
 
 public class DataConfig {
@@ -26,11 +29,19 @@ public class DataConfig {
 	private SparseArray<LinkRelation> linkRelations = new SparseArray<LinkRelation>();
 	private SparseArray<Vehicle> vehicleList = new SparseArray<Vehicle>();
 
-	public DataConfig(Context mContext) {
+	private DataConfig(Context mContext) {
 		super();
 		this.mContext = mContext;
 	}
 
+	// 单例模式
+	private static DataConfig instance = null;
+	public static DataConfig getInstance(Context ctx) {
+		if(instance == null)
+			instance = new DataConfig(ctx);
+		return instance;
+	}
+	
 	public boolean initAll() {
 
 		
@@ -59,6 +70,12 @@ public class DataConfig {
 		return vehicleList.get(vehicleId.intValue());
 	}
 	
+	/**
+	 * 获得转向到的link id
+	 * @param curLinkId 当前link id
+	 * @param direction 转向方向
+	 * @return
+	 */
 	public Integer getTurnLink(Integer curLinkId, int direction) {
 		LinkRelation relation = linkRelations.get(curLinkId);
 		if(relation == null)
@@ -66,17 +83,82 @@ public class DataConfig {
 		return relation.getNextLink(direction);
 	}
 	
+	/**
+	 * 获得link的起点经纬度
+	 * @param linkId
+	 * @return
+	 */
+	public Point getStartPointOfLink(Integer linkId) {
+		Integer nodeId = getStartNodeIdOfLink(linkId);
+		return getLatLngOfNode(nodeId);
+	}
+	
+	/**
+	 * 获得
+	 * @param linkid
+	 * @return
+	 */
+	public Integer getStartNodeIdOfLink(Integer linkId) {
+		Assert.assertNotNull(linkId);
+		Assert.assertNotNull(linkInfo);
+		Link link = linkInfo.get(linkId.intValue());
+		Integer nodeId = link.getAnode();
+		return nodeId;
+	}
+	/**
+	 * 获得link的终点经纬度
+	 * @param linkId
+	 * @return
+	 */
+	public Point getEndPointOfLink(Integer linkId) {
+		Integer nodeId = getEndNodeIdOfLink(linkId);
+		return getLatLngOfNode(nodeId);
+	}
+	
+	public Integer getEndNodeIdOfLink(Integer linkId) {
+		Assert.assertNotNull(linkId);
+		Assert.assertNotNull(linkInfo);
+		Link link = linkInfo.get(linkId.intValue());
+		Integer nodeId = link.getBnode();
+		return nodeId;
+	}
+	
+	/**
+	 * 获得node的经纬度
+	 * @param nodeId
+	 * @return
+	 */
+	public Point getLatLngOfNode(Integer nodeId) {
+		Assert.assertNotNull(nodeId);
+		Assert.assertNotNull(nodeInfo);
+		Node node = nodeInfo.get(nodeId.intValue());
+		Point point = new Point(node.getLatitude(), node.getLongitude());
+		return point;
+	}
+	
+	/**
+	 * 从link列表转换成经纬度列表
+	 * @param pathLinks
+	 * @return
+	 */
+	public List<Point> getPointsOfLink(List<Integer> pathLinks) {
+		Assert.assertNotNull(pathLinks);
+		Assert.assertNotNull(linkInfo);
+		List<Point> points = new ArrayList<Point>();
+		int size = pathLinks.size();
+		for(int i=0; i<size-1; i++) {
+			Integer linkId = pathLinks.get(i);
+			Point point = getEndPointOfLink(linkId);
+			points.add(point);
+		}
+		return points;
+	}
+	
 	private boolean initMapData() {
 		try {
-			System.out.println("7");
 			if(!initNode()) return false;
-
-			System.out.println("55555555");
 			if(!initRelation()) return false;
-			System.out.println("66666");
-
-			if(!initRelation()) return false;
-
+			
 			InputStreamReader in = new InputStreamReader(mContext
 					.getResources().getAssets().open(LINK_INFO_FILE));
 			BufferedReader bufReader = new BufferedReader(in);
@@ -202,5 +284,4 @@ public class DataConfig {
 		}
 		return true;
 	}
-
 }

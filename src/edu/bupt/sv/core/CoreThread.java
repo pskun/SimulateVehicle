@@ -1,7 +1,11 @@
 package edu.bupt.sv.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Assert;
+
+import edu.bupt.sv.entity.PathInfo;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.SubInfo;
 import edu.bupt.sv.entity.Vehicle;
@@ -83,7 +87,6 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
         };
         
         sendMessage(MSG_INIT_THREAD);
-        System.out.println("44444444");
         Looper.loop();
 	}
 
@@ -101,8 +104,10 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		case MSG_INIT_VEHICLE:
 			handleInitVehicle((Integer) msg.obj);
 			break;
-		case MSG_PATH_PLAN:
+		case MSG_CHANGE_PATH:
 			handlePathPlan((Integer) msg.obj);
+			break;
+		case MSG_CHANGE_DEST:
 			break;
 		case MSG_ON_RECEIVE:
 			handleReceiveData(msg.arg1, msg.obj);
@@ -122,9 +127,8 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		} else {
 			LogUtil.warn("tmAccessor already exists.");
 		}
-		System.out.println("7888888");
 		if (null == dataConfig) {
-			dataConfig = new DataConfig(mContext);
+			dataConfig = DataConfig.getInstance(mContext);
 			if(!dataConfig.initAll()) {
 				mHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
 				return;
@@ -169,7 +173,20 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	private void handleInitVehicle(Integer vehicleId) {
 		// 从vehicleList中选一个
 		Vehicle v = dataConfig.getVehicleFromConfig(vehicleId);
+		Assert.assertNotNull(v);
 		this.vehicle = v;
+		// 给出车的初始化信息
+		List<Integer> pathLinks = vehicle.getPath();
+		List<Point> points = dataConfig.getPointsOfLink(pathLinks);
+		Integer startNodeID = vehicle.getStartPos();
+		Integer endNodeId = vehicle.getEndPos();
+		Point startPoint = dataConfig.getLatLngOfNode(startNodeID);
+		Point endPoint = dataConfig.getLatLngOfNode(endNodeId);
+		points.add(0, startPoint);
+		points.add(endPoint);
+		if(coreListener != null) {
+			coreListener.onPathChanged(true, points, startPoint, endPoint);
+		}
 		// 订阅车辆信息
 		boolean ret = tmAccessor.requestInitVehicle(vehicleId);
 		if(!ret && coreListener != null) {
@@ -190,12 +207,42 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		Integer turnLinkId = dataConfig.getTurnLink(currentLinkId, direction.intValue());
 		// 不能转向或者与路径规划相同
 		if(nextLinkId==null || turnLinkId==null || nextLinkId.equals(turnLinkId)) {
-			coreListener.onPathChanged(false, null);
+			coreListener.onPathChanged(false, null, null, null);
 			LogUtil.verbose("turn new path failed.");
 			String hint = CommonUtil.catString("currentLinkId: ", currentLinkId, "nextLink: ", nextLinkId, "turnLinkId: ",turnLinkId);
 			LogUtil.verbose(hint);
 			return;
 		}
+		List<Integer> tempPath = new ArrayList<Integer>();
+		tempPath.add(currentLinkId);
+		tempPath.add(turnLinkId);
+		Point startPoint = dataConfig.getEndPointOfLink(turnLinkId);
+		Integer endNodeId = vehicle.getEndPos();
+		Point endPoint = dataConfig.getLatLngOfNode(endNodeId);
+		ppTask.startTask(startPoint, endPoint, tempPath);
+	}
+	
+	private void handleChangeDest(Integer newDestNodeId) {
+		// 获得当前的linkid
+		Integer currentLinkId = vehicle.getLinkID();
+		// 获得规划的路径的下一个link
+		Integer nextLinkId = vehicle.getNextLinkOfPath(currentLinkId);
+		// 获得规划的路径的终点
+		Integer destNodeId = vehicle.getEndPos();
+		// 终点相同
+		if(nextLinkId==null || destNodeId==null || destNodeId.equals(newDestNodeId)) {
+			coreListener.onPathChanged(false, null, null, null);
+			LogUtil.verbose("change destination failed.");
+			String hint = CommonUtil.catString("destNodeId: ", destNodeId, "newDestNode: ", newDestNodeId);
+			LogUtil.verbose(hint);
+			return;
+		}
+		List<Integer> tempPath = new ArrayList<Integer>();
+		tempPath.add(currentLinkId);
+		tempPath.add(nextLinkId);
+		Point startPoint = dataConfig.getEndPointOfLink(nextLinkId);
+		Point endPoint = dataConfig.getLatLngOfNode(newDestNodeId);
+		ppTask.startTask(startPoint, endPoint, tempPath);
 	}
 	
 	private void onReceiveSubInfoData(SubInfo subInfo) {
@@ -211,6 +258,19 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		// 当前电量
 		if (setCharge(subInfo.currentCharge)) {
 			coreListener.onChargedChanged(subInfo.currentCharge);
+		}
+	}
+	
+	private void onReceivePathInfoData(PathInfo pathInfo) {
+		List<Integer> links = pathInfo.links;
+		List<Point> nodes = pathInfo.pathNodes;
+		// TODO 合法性确认，可能还没转呢
+		vehicle.setPath(links);
+		vehicle.setStartPos(dataConfig.getStartNodeIdOfLink(links.get(0)));
+		vehicle.setEndPos(dataConfig.getEndNodeIdOfLink(links.get(links.size()-1)));
+		// 给前端的回调
+		if(coreListener != null) {
+			coreListener.onPathChanged(true, nodes, nodes.get(0), nodes.get(nodes.size()-1));
 		}
 	}
 	
@@ -233,6 +293,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			onReceiveSubInfoData((SubInfo) data);
 			break;
 		case DATA_PATH_PLAN:
+			onReceivePathInfoData((PathInfo) data);
 			break;
 		}
 	}

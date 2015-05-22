@@ -2,31 +2,49 @@ package edu.bupt.sv.test;
 
 import java.util.List;
 
+import edu.bupt.sv.core.ApiFactory;
 import edu.bupt.sv.core.CoreApi;
 import edu.bupt.sv.core.CoreListener;
 import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.Vehicle;
-import edu.bupt.sv.ui.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class TestActivity extends Activity {
+	
+	private static final int MSG_ON_LOCATION_CHANGE = 1;
 	
 	private Button vehicleListBtn;
 	private Button quitBtn;
 	private Button subVehicleBtn;
 	private Button initBtn;
-
+	private Button turnNewPathBtn;
+	private Button changeDestBtn;
+	
+	private TextView latText;
+	private TextView lngText;
+	
 	private Context mContext;
 	private CoreApi api;
 	
 
+	private Handler uiHandler = new Handler(getMainLooper()) {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			handleLocalMessage(msg);
+		}
+	};
+	
 	private CoreListener coreListener = new CoreListener() {
 		
 		@Override
@@ -39,24 +57,12 @@ public class TestActivity extends Activity {
 
 		@Override
 		public void onLocationChanged(Point newPoint) {
-			System.out.println("Current Location: " + newPoint.latitude + " " + newPoint.longitude);
+			uiHandler.obtainMessage(MSG_ON_LOCATION_CHANGE, newPoint);
 		}
 
 		@Override
 		public void onChargedChanged(double charge) {
 			System.out.println("Current charge: " + charge);
-		}
-
-		@Override
-		public void onPathChanged(boolean success, List<Point> paths) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onDestChanged(Point newDest, List<Point> paths) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
@@ -69,8 +75,12 @@ public class TestActivity extends Activity {
 		public void onInitFinish(SparseArray<Node> nodes,
 				SparseArray<Vehicle> vehicles) {
 			// TODO Auto-generated method stub
-			
-			
+		}
+
+		@Override
+		public void onPathChanged(boolean success, List<Point> paths,
+				Point start, Point end) {
+			// TODO Auto-generated method stub
 			
 		}
 		
@@ -99,7 +109,7 @@ public class TestActivity extends Activity {
 	};
 	
 	private void init() {
-		api = new CoreApi(mContext);
+		api = ApiFactory.getInstance(mContext);
 		api.setListener(coreListener);
 		api.initApi();
 	}
@@ -135,5 +145,27 @@ public class TestActivity extends Activity {
 		subVehicleBtn = (Button) findViewById(R.id.sub_vehicle_btn);
 		subVehicleBtn.setOnClickListener(listener);
 		
+		turnNewPathBtn = (Button) findViewById(R.id.turn_new_path_btn);
+		turnNewPathBtn.setOnClickListener(listener);
+		
+		changeDestBtn = (Button) findViewById(R.id.change_dest_btn);
+		changeDestBtn.setOnClickListener(listener);
+		
+		latText = (TextView) findViewById(R.id.lat_text);
+		lngText = (TextView) findViewById(R.id.lng_text);
+		
+	}
+	
+	private void handleLocalMessage(Message msg) {
+		switch(msg.what) {
+		case MSG_ON_LOCATION_CHANGE:
+			handleOnlocationChanged((Point) msg.obj);
+			break;
+		}
+	}
+	
+	private void handleOnlocationChanged(Point newPoint) {
+		latText.setText("Î³¶È: " + newPoint.latitude);
+		lngText.setText("¾­¶È: " + newPoint.longitude);
 	}
 }

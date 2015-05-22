@@ -109,6 +109,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 				mLocalHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
 				return;
 			}
+			// 收到新的路径，告知coreThread
 			coreHandler.obtainMessage(MSG_ON_RECEIVE, DATA_PATH_PLAN, -1, pathInfo);
 		}
 	}

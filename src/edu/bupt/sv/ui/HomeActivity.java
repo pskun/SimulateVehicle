@@ -10,6 +10,7 @@ import edu.bupt.sv.core.CoreListener;
 import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.Vehicle;
+import edu.bupt.sv.test.R;
 
 import android.app.Activity;
 import android.content.Context;
@@ -51,18 +52,6 @@ public class HomeActivity extends Activity {
 		}
 
 		@Override
-		public void onPathChanged(List<Point> paths) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onDestChanged(Point newDest, List<Point> paths) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void onError(int errorCode) {
 			// TODO Auto-generated method stub
 			
@@ -73,6 +62,13 @@ public class HomeActivity extends Activity {
 				SparseArray<Vehicle> vehicles) {
 			// TODO Auto-generated method stub
 			loadInfo(vehicles);		
+		}
+
+		@Override
+		public void onPathChanged(boolean success, List<Point> paths,
+				Point start, Point end) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	};

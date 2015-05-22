@@ -4,9 +4,9 @@ import java.util.List;
 
 public class Vehicle {
 	private Integer id;
-	// 起始link id
+	// 起始node id
 	private Integer startPos;
-	// 终止link id
+	// 终止node id
 	private Integer endPos;
 	// 当前所在link
 	private Integer linkID;
