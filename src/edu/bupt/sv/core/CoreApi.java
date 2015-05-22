@@ -1,6 +1,10 @@
 package edu.bupt.sv.core;
 
 import android.content.Context;
+import android.util.SparseArray;
+import edu.bupt.sv.entity.Node;
+import edu.bupt.sv.entity.Vehicle;
+import edu.bupt.sv.utils.DataConfig;
 import edu.bupt.sv.utils.LogUtil;
 
 public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
@@ -91,6 +95,18 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 			coreThread.destroy();
 			coreListener = null;
 		}
+	}
+
+	@Override
+	public SparseArray<Vehicle> getVehicleList() {
+		DataConfig dc = DataConfig.getInstance(mContext);
+		return dc.getVehicleList();
+	}
+
+	@Override
+	public SparseArray<Node> getNodeList() {
+		DataConfig dc = DataConfig.getInstance(mContext);
+		return dc.getNodeInfo();
 	}
 	
 }

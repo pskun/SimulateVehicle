@@ -130,14 +130,6 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		}
 		if (null == dataConfig) {
 			dataConfig = DataConfig.getInstance(mContext);
-			if(!dataConfig.initAll()) {
-				mHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
-				return;
-			}
-			
-			if (null != coreListener) {
-				coreListener.onInitFinish(dataConfig.getNodeInfo(), dataConfig.getVehicleList());
-			}
 		}
 		if (ppTask == null) {
 			ppTask = new PathPlanTask(mHandler, tmAccessor);
