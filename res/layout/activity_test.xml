@@ -33,13 +33,50 @@
         android:layout_below="@+id/vehicle_list_btn"
         android:text="订阅车辆信息" />
 
+    <TextView
+        android:id="@+id/lat_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/init_btn"
+        android:layout_alignBottom="@+id/init_btn"
+        android:layout_centerHorizontal="true"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/lng_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/lat_text"
+        android:layout_alignBottom="@+id/lat_text"
+        android:layout_marginLeft="30dp"
+        android:layout_toRightOf="@+id/lat_text"
+        android:text="TextView" />
+
     <Button
-        android:id="@+id/quit_btn"
+        android:id="@+id/turn_new_path_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/sub_vehicle_btn"
         android:layout_alignRight="@+id/sub_vehicle_btn"
         android:layout_below="@+id/sub_vehicle_btn"
+        android:text="改变路径" />
+
+    <Button
+        android:id="@+id/change_dest_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/turn_new_path_btn"
+        android:layout_alignRight="@+id/turn_new_path_btn"
+        android:layout_below="@+id/turn_new_path_btn"
+        android:text="改变终点" />
+
+    <Button
+        android:id="@+id/quit_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/change_dest_btn"
+        android:layout_alignRight="@+id/change_dest_btn"
+        android:layout_below="@+id/change_dest_btn"
         android:text="退出" />
 
 </RelativeLayout>

@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.bupt.sv.core.ApiFactory;
 import edu.bupt.sv.core.CoreApi;
 import edu.bupt.sv.core.CoreListener;
 import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.Vehicle;
+
 import edu.bupt.sv.utils.LogUtil;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -35,6 +38,7 @@ public class HomeActivity extends Activity {
 	private CoreApi api;
 	private Handler myHandler;
 	
+	
 	private CoreListener coreListener = new CoreListener() {
 		
 		@Override
@@ -58,22 +62,19 @@ public class HomeActivity extends Activity {
 		}
 
 		@Override
-		public void onPathChanged(List<Point> paths) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onDestChanged(Point newDest, List<Point> paths) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void onError(int errorCode) {
 			// TODO Auto-generated method stub
 			
 		}
+
+
+		@Override
+		public void onPathChanged(boolean success, List<Point> paths,
+				Point start, Point end) {
+			// TODO Auto-generated method stub
+			
+		}
+
 
 		@Override
 		public void onInitFinish(SparseArray<Node> nodes,
@@ -81,6 +82,7 @@ public class HomeActivity extends Activity {
 			// TODO Auto-generated method stub		
 			sendMessage(1, vehicles);
 		}
+
 		
 	};
 	
@@ -97,12 +99,11 @@ public class HomeActivity extends Activity {
 	};
 	
 	private void init() {
-		api = new CoreApi(mContext);
+		api = ApiFactory.getInstance(mContext);
 		api.setListener(coreListener);
 		api.initApi();
 	}
-	
-	
+		
 	public void sendMessage(int msgCode) {
 		if(myHandler == null) {
 			LogUtil.warn("uiThread handler is null. Unable to send message.");
@@ -153,7 +154,7 @@ public class HomeActivity extends Activity {
 			listItem.put("vehicleId","车辆ID:　"+i);
 			Vehicle curVehicle = vehicles.get(i);
 			listItem.put("desc","车辆型号："+curVehicle.getModel()+ "\n总电量 ：" + curVehicle.getTotalEnergy()
-					+ "\n剩余电量" +curVehicle.getCharge() + "\n运行速度"+ curVehicle.getSpeed());
+					+ "\n剩余电量：" +curVehicle.getCharge() + "\n运行速度 :　"+ curVehicle.getSpeed());
 			listItems.add(listItem);
 		}
 		
@@ -167,6 +168,8 @@ public class HomeActivity extends Activity {
 		vehicleList.setOnItemClickListener(listener);
 		
 	}
+	
+	
 	public void clickList (View view){
 		Intent intent = new Intent();
     	intent.setClassName(this, "edu.bupt.sv.ui.FunctionActivity");

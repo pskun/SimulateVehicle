@@ -10,7 +10,7 @@ public interface CoreInterface {
 	
 	public boolean turnNewPath(int direction);
 	
-	public void changeDestination();
+	public boolean changeDestination(Integer newDestNodeId);
 	
 	public void requestCharge();
 	

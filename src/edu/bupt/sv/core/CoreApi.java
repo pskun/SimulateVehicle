@@ -60,13 +60,16 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 	public boolean turnNewPath(int direction) {
 		if(!isThreadValid())
 			return false;
-		coreThread.sendMessage(MSG_PATH_PLAN, Integer.valueOf(direction));
+		coreThread.sendMessage(MSG_CHANGE_PATH, Integer.valueOf(direction));
 		return true;
 	}
 
 	@Override
-	public void changeDestination() {
-		// TODO Auto-generated method stub
+	public boolean changeDestination(Integer newDestNodeId) {
+		if(!isThreadValid())
+			return false;
+		coreThread.sendMessage(MSG_CHANGE_DEST, newDestNodeId);
+		return true;
 		
 	}
 

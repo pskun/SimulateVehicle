@@ -1,23 +1,27 @@
 package edu.bupt.sv.entity;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class Vehicle {
 	private Integer id;
-	//起始link
+	// 起始node id
 	private Integer startPos;
+	// 终止node id
 	private Integer endPos;
-	//当前所在link
+	// 当前所在link
 	private Integer linkID;
-	//车辆状态
+	// 车辆状态
 	private Integer status;
+	// 车辆类型
 	private Integer model;
+	// 
 	private Double energyCost;
 	private Double totalEnergy;
 	//当前电量
 	private Double charge;
 	private Double reservedEnergy;
 	private Double speed;
+	// 车辆的路线
 	private List<Integer> path;	
 	// 经度
 	private double longitude;
@@ -47,7 +51,9 @@ public class Vehicle {
 	
 	public Vehicle(){};
 	
-	
+	/**
+	 * getter and setter below
+	 */
 	public Integer getId() {
 		return id;
 	}
@@ -133,6 +139,19 @@ public class Vehicle {
 		this.latitude = latitude;
 	}
 	
-	
-	
+	/**
+	 * 获得已规划的路径中下一个linkid
+	 * @param currentLinkId
+	 * @return 返回id，没有下一个id返回-1
+	 */
+	public Integer getNextLinkOfPath(Integer currentLinkId) {
+		if(path == null)
+			return null;
+		int size = path.size();
+		for(int i=0; i<size; i++) {
+			if(path.get(i).equals(currentLinkId) && i+1<size)
+				return path.get(i+1);
+		}
+		return null;
+	}
 }

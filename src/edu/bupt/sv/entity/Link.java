@@ -7,8 +7,6 @@ public class Link {
 	private Integer Bnode;
 	private double length;
 	
-	
-
 	public Link(int id, Integer anode, Integer bnode, double length) {
 		super();
 		this.id = id;
@@ -20,6 +18,18 @@ public class Link {
 	
 	public int getId() {
 		return id;
+	}
+
+	public Integer getAnode() {
+		return Anode;
+	}
+
+	public Integer getBnode() {
+		return Bnode;
+	}
+
+	public double getLength() {
+		return length;
 	}
 	
 	
