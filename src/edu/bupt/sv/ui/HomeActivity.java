@@ -35,56 +35,13 @@ public class HomeActivity extends Activity {
 	private ListView vehicleList;
 	
 	private Context mContext;
+	//private Handler myHandler;
 	private CoreApi api;
-	private Handler myHandler;
 	
-	
-	private CoreListener coreListener = new CoreListener() {
-		
-		@Override
-		public void onRecvVehicleList(List<Integer> vehicleIds) {
-			int size = vehicleIds.size();
-			for(int i=0; i<size; i++) {
-				System.out.println("Vehicle id: " + vehicleIds.get(i));
-			}
-		}
-
-		@Override
-		public void onLocationChanged(Point newPoint) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onChargedChanged(double charge) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onError(int errorCode) {
-			// TODO Auto-generated method stub
-			
-		}
-
-
-		@Override
-		public void onPathChanged(boolean success, List<Point> paths,
-				Point start, Point end) {
-			// TODO Auto-generated method stub
-			
-		}
-
-
-		@Override
-		public void onInitFinish(SparseArray<Node> nodes,
-				SparseArray<Vehicle> vehicles) {
-			// TODO Auto-generated method stub		
-			sendMessage(1, vehicles);
-		}
-
-		
-	};
+	private void init() {
+		api = ApiFactory.getInstance(mContext);
+		//api.initApi();
+	}
 	
 	private OnItemClickListener  listener = new OnItemClickListener()  {
 
@@ -92,35 +49,11 @@ public class HomeActivity extends Activity {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			// TODO Auto-generated method stub
-			clickList(view);
-			//System.out.println("111111111111111111"+position);
+			clickList(position);
              		
 		}
 	};
-	
-	private void init() {
-		api = ApiFactory.getInstance(mContext);
-		api.setListener(coreListener);
-		api.initApi();
-	}
-		
-	public void sendMessage(int msgCode) {
-		if(myHandler == null) {
-			LogUtil.warn("uiThread handler is null. Unable to send message.");
-			return;
-		}
-		myHandler.obtainMessage(msgCode).sendToTarget();
-	}
-	
-	public void sendMessage(int msgCode, Object object) {
-		if(myHandler == null) {
-			LogUtil.warn("uiThread handler is null. Unable to send message.");
-			return;
-		}
-		myHandler.obtainMessage(msgCode, object).sendToTarget();
-	}
-	
-	
+			
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -128,23 +61,11 @@ public class HomeActivity extends Activity {
 		setContentView(R.layout.home_page);
 		
 		this.mContext = this.getApplicationContext();
-		//加载放在onInitFinish中进行
-		myHandler =new Handler(){
-			   @Override
-	            public void handleMessage(Message msg) {
-	                super.handleMessage(msg);
-	                switch(msg.what)
-	        		{
-	        		case  1 :
-	        			loadInfo((SparseArray<Vehicle>) msg.obj);
-	        			break;
-	        		}
-	            }
-		};
-		init();
+		init();	
+		loadInfo(api.getVehicleList());
 	}
 	
-	private void loadInfo (SparseArray<Vehicle> vehicles){
+	private void loadInfo (SparseArray<Vehicle> vehicles) {
 
 		int[] imageIds = new int[]{R.drawable.type0};
 		List<Map <String,Object>> listItems = new ArrayList<Map<String ,Object>>();
@@ -169,11 +90,17 @@ public class HomeActivity extends Activity {
 		
 	}
 	
-	
-	public void clickList (View view){
+	public void clickList (int position){
 		Intent intent = new Intent();
     	intent.setClassName(this, "edu.bupt.sv.ui.FunctionActivity");
+    	intent.putExtra("id", position);
     	startActivity(intent);
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
 	}
 	
 

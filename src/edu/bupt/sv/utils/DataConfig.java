@@ -198,8 +198,9 @@ public class DataConfig {
 			while (line != null) {
 				String[] split = line.split("\t");
 				Integer id = Integer.parseInt(split[0]);
-				Double Lon = Double.parseDouble(split[1]);
-				Double Lat = Double.parseDouble(split[2]);
+				
+				Double Lat = CommonUtil.convertToValidLatLng(Integer.valueOf(split[1]));
+				Double Lon = CommonUtil.convertToValidLatLng(Integer.valueOf(split[2]));
 				Node node = new Node(id, Lon, Lat);
 				nodeInfo.append(node.getId(), node);
 				line = bufReader.readLine();
@@ -219,17 +220,18 @@ public class DataConfig {
 			BufferedReader bufReader = new BufferedReader(in);
 			String line = bufReader.readLine();
 			line = bufReader.readLine();
-
 			while (line != null) {
+				
 				String[] split = line.split("\t");
 				Integer id = Integer.parseInt(split[0]);
 				Integer[] nextlinks = new Integer[3];
+				
 				for (int i = 0; i < split.length - 1; i++) {
 					if (!CommonUtil.isStringNull(split[i + 1])) {
 						nextlinks[i] = Integer.parseInt(split[i + 1]);
 					}
 				}
-				LinkRelation linkrelation = new LinkRelation(id, nextlinks);
+				LinkRelation linkrelation = new LinkRelation(id,nextlinks);
 				linkRelations.append(linkrelation.getId(), linkrelation);
 				line = bufReader.readLine();
 			}

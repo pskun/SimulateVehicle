@@ -8,6 +8,7 @@ import edu.bupt.sv.core.CoreListener;
 import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.Vehicle;
+import edu.bupt.sv.ui.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
