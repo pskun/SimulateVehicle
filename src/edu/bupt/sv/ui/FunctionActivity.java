@@ -40,6 +40,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private static final int MSG_ON_LOCATION_CHANGE = 1;
 	private static final int MSG_ON_PATH_CHANGE =2;
 	private static final int MSG_ON_CHARGE_CHANGE =3;
+	//private static final int MSG_ON_DIRECTION_CHANGE =3;
 	
 	static final LatLng NKUT = new LatLng(23.979548, 120.696745);
     private GoogleMap map;
@@ -134,8 +135,9 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
    @Override
     protected void onCreate(Bundle savedInstanceState) {	 
          super.onCreate(savedInstanceState);
-         setContentView(R.layout.function_page); 
-         
+         setContentView(R.layout.function_page);
+         DirectionView directionView = (DirectionView) this.findViewById(R.id.cv);
+         directionView.init(api);
          this.mContext = this.getApplicationContext();
          vehicleid = getIntent().getIntExtra("id", 0);
          init();
@@ -187,7 +189,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			handleOnPathChanged((List<Point>) msg.obj);			
 			break;
 		case MSG_ON_LOCATION_CHANGE:
-			System.out.println("111111#32");
+			//System.out.println("111111#32");
 			handleOnLocationChanged((Point) msg.obj);
 			break;
 		case MSG_ON_CHARGE_CHANGE:
@@ -210,7 +212,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	}
 	
 	private void handleOnLocationChanged(Point newPoint){
-		System.out.println("111111#36");
+		//System.out.println("111111#36");
 		if(carPosition!=null){
 		carPosition.remove();}
 		LatLng Position = new LatLng(newPoint.latitude, newPoint.longitude);  

@@ -1,16 +1,21 @@
 package edu.bupt.sv.ui;
 
+import edu.bupt.sv.core.CoreApi;
+import edu.bupt.sv.entity.EntityConstants;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class DirectionView extends View {
+public class DirectionView extends View implements EntityConstants{
+	
+	private CoreApi api;
 
     private int circleWidth = 100; // Ô²»·Ö±¾¶
     private int circleColor = Color.argb(150, 255, 0, 0);
@@ -22,6 +27,8 @@ public class DirectionView extends View {
     private float innerCircleRadius = 0;
     private float smallCircle = 10;
     public Dir dir = Dir.UP;
+    
+ 
 
     public DirectionView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -36,6 +43,11 @@ public class DirectionView extends View {
     public DirectionView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
+    }
+    
+   
+   public void init(CoreApi api){
+	   this.api = api;
     }
 
     @Override
@@ -120,15 +132,18 @@ public class DirectionView extends View {
         switch (dir) {
         case UP:
             drawUpTriangle(canvas);
+            api.turnNewPath(TURN_STRAIGHT);
             break;
         case DOWN:
             drawDownTriangle(canvas);
             break;
         case LEFT:
             drawLeftTriangle(canvas);
+            api.turnNewPath(TURN_LEFT);
             break;
         case RIGHT:
             drawRightTriangle(canvas);
+            api.turnNewPath(TURN_RIGHT);
             break;
         case CENTER:
             invalidate();
@@ -183,6 +198,7 @@ public class DirectionView extends View {
         canvas.drawLine(center, center, center - innerCircleRadius, center, paint);
 
         drawOnclikColor(canvas, Dir.LEFT);
+        
 
     }
 
