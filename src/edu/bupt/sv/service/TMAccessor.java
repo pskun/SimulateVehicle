@@ -21,8 +21,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 	private int nextVehicleListSendId;
 	private int nextInitVehicleSendId;
 	private int nextChangeDestSendId;
-
-	private boolean isTempChangeDest = false;
+	private int nextChangePathSendId;
 	
 	private TMListener tmListener = new TMListener() {
 		@Override
@@ -34,10 +33,17 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 				handleInitVehicleNTY(NTY);
 			} else if (ID == nextChangeDestSendId) {
 				if(checkResponseCode(NTY.NTY.Code)) {
-					jobHandler.obtainMessage(MSG_CHANGE_DEST, new Boolean(isTempChangeDest)).sendToTarget();
+					jobHandler.obtainMessage(MSG_ON_RECEIVE, DATA_TM_DEST_ACK, -1);
+				} else {
+					// TODO
+					// 处理错误
 				}
-				else {
-					jobHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
+			} else if (ID == nextChangePathSendId) {
+				if(checkResponseCode(NTY.NTY.Code)) {
+					jobHandler.obtainMessage(MSG_ON_RECEIVE, DATA_TM_PATH_ACK, -1);
+				} else {
+					// TODO
+					// 处理错误
 				}
 			}
 		}
@@ -58,6 +64,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		nextVehicleListSendId = -1;
 		nextInitVehicleSendId = -1;
 		nextChangeDestSendId = -1;
+		nextChangePathSendId = -1;
 		LogUtil.verbose("tmAccessor: initialize tmAccessor done.");
 	}
 
@@ -68,6 +75,8 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		}
 		nextVehicleListSendId = -1;
 		nextInitVehicleSendId = -1;
+		nextChangeDestSendId = -1;
+		nextChangePathSendId = -1;
 	}
 	
 	public void setJobHandler(Handler jobHandler) {
@@ -101,8 +110,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		return true;
 	}
 
-	public boolean requestChangeDest(Integer vehicleId, List<Integer> links, boolean isTemporary) {
-		this.isTempChangeDest = isTemporary;
+	public boolean requestChangeDest(Integer vehicleId, Integer destNodeId) {
 		if (tmMsgHandler == null) {
 			LogUtil.error("requestChangeDest: tmMsgHanlder is null.");
 			return false;
@@ -113,8 +121,29 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		}
 		List<Integer> vi = new ArrayList<Integer>();
 		vi.add(vehicleId);
-		nextChangeDestSendId = tmMsgHandler.sendChangeDst(vi, links);
+		List<Integer> did = new ArrayList<Integer>();
+		did.add(destNodeId);
+		nextChangeDestSendId = tmMsgHandler.sendChangeDst(vi, did);
 		LogUtil.verbose("TMAccessor: message of requestChangeDest was sent, id: " + nextChangeDestSendId);
+		return true;
+	}
+	
+	public boolean requestChangePath(Integer vehicleId, List<Integer> links) {
+		if (tmMsgHandler == null) {
+			LogUtil.error("requestChangeDest: tmMsgHanlder is null.");
+			return false;
+		}
+		if (vehicleId == null) {
+			LogUtil.error("requestChangeDest: vehicle id is null.");
+			return false;
+		}
+		List<Integer> vi = new ArrayList<Integer>();
+		vi.add(vehicleId);
+		List<List<Integer>> ls = new ArrayList<List<Integer>>();
+		ls.add(links);
+		List<List<Integer>> cs = new ArrayList<List<Integer>>();
+		nextChangePathSendId = tmMsgHandler.sendChangePath(vi, ls, cs);
+		LogUtil.verbose("TMAccessor: message of requestChangePath was sent, id: " + nextChangePathSendId);
 		return true;
 	}
 	

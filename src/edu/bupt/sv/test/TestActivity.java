@@ -62,11 +62,6 @@ public class TestActivity extends Activity {
 		}
 
 		@Override
-		public void onChargedChanged(double charge) {
-			System.out.println("Current charge: " + charge);
-		}
-
-		@Override
 		public void onError(int errorCode) {
 			// TODO Auto-generated method stub
 			
@@ -81,6 +76,13 @@ public class TestActivity extends Activity {
 		@Override
 		public void onPathChanged(boolean success, List<Point> paths,
 				Point start, Point end) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onOtherInfoChanged(double charge, double speed,
+				Integer linkId) {
 			// TODO Auto-generated method stub
 			
 		}

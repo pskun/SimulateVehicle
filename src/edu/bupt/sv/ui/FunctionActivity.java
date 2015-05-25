@@ -81,13 +81,6 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		}
 
 		@Override
-		public void onChargedChanged(double charge) {
-			System.out.println("Current charge: " + charge);
-			uiHandler.obtainMessage(MSG_ON_CHARGE_CHANGE,charge).sendToTarget();
-			
-		}
-
-		@Override
 		public void onError(int errorCode) {
 			// TODO Auto-generated method stub
 			
@@ -97,7 +90,6 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 				Point start, Point end) {
 			// TODO Auto-generated method stub
 			uiHandler.obtainMessage(MSG_ON_PATH_CHANGE,paths).sendToTarget();
-			//System.out.println("111111#33");
 			uiHandler.obtainMessage(MSG_ON_LOCATION_CHANGE,start).sendToTarget();
 		
 		}
@@ -105,6 +97,13 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		public void onInitFinish(SparseArray<Node> nodes,
 				SparseArray<Vehicle> vehicles) {
 			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onOtherInfoChanged(double charge, double speed,
+				Integer linkId) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	};

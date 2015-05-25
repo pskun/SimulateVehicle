@@ -35,4 +35,8 @@ public interface MsgConstants {
 	public static final int DATA_VEHICLE_INFO = 2;
 	// 路径规划数据标识
 	public static final int DATA_PATH_PLAN = 3;
+	// TM路径改变确认消息标识
+	public static final int DATA_TM_PATH_ACK = 4;
+	// TM终点改变确认消息标识
+	public static final int DATA_TM_DEST_ACK = 5;
 }

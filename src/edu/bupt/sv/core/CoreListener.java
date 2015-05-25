@@ -22,7 +22,7 @@ public interface CoreListener {
 	 * 车辆电量变化时的回调
 	 * @param charge
 	 */
-	void onChargedChanged(double charge);
+	void onOtherInfoChanged(double charge, double speed, Integer linkId);
 	
 	/**
 	 * 重新规划路径后的回调

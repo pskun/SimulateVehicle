@@ -1,6 +1,5 @@
 package edu.bupt.sv.core;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -206,13 +205,11 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			LogUtil.verbose(hint);
 			return;
 		}
-		List<Integer> tempPath = new ArrayList<Integer>();
-		tempPath.add(currentLinkId);
-		tempPath.add(turnLinkId);
+		Integer tempDestNodeId = dataConfig.getEndNodeIdOfLink(turnLinkId);
 		Point startPoint = dataConfig.getEndPointOfLink(turnLinkId);
 		Integer endNodeId = vehicle.getEndPos();
 		Point endPoint = dataConfig.getLatLngOfNode(endNodeId);
-		ppTask.startTask(startPoint, endPoint, tempPath);
+		ppTask.startTask(startPoint, endPoint, tempDestNodeId);
 	}
 	
 	private void handleChangeDest(Integer newDestNodeId) {
@@ -230,12 +227,10 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			LogUtil.verbose(hint);
 			return;
 		}
-		List<Integer> tempPath = new ArrayList<Integer>();
-		tempPath.add(currentLinkId);
-		tempPath.add(nextLinkId);
+		Integer tempDestNodeId = dataConfig.getEndNodeIdOfLink(nextLinkId);
 		Point startPoint = dataConfig.getEndPointOfLink(nextLinkId);
 		Point endPoint = dataConfig.getLatLngOfNode(newDestNodeId);
-		ppTask.startTask(startPoint, endPoint, tempPath);
+		ppTask.startTask(startPoint, endPoint, tempDestNodeId);
 	}
 	
 	private void onReceiveSubInfoData(SubInfo subInfo) {
@@ -250,9 +245,11 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			coreListener.onLocationChanged(new Point(subInfo.latitude, subInfo.longitude));
 		}
 		// 当前电量
-		if (setCharge(subInfo.currentCharge)) {
-			coreListener.onChargedChanged(subInfo.currentCharge);
-		}
+		setCharge(subInfo.currentCharge);
+		// 当前速度
+		setSpeed(subInfo.speed);
+		if(coreListener != null)
+			coreListener.onOtherInfoChanged(subInfo.currentCharge, subInfo.speed, subInfo.linkId);
 	}
 	
 	private void onReceivePathInfoData(PathInfo pathInfo) {
@@ -319,6 +316,11 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		return false;
 	}
 	
+	/**
+	 * 设置当前电量,如果电量有更新则返回true，否则返回false
+	 * @param charge
+	 * @return
+	 */
 	private boolean setCharge(double charge){
 		if(!isExistVehicle())
 			return false;
@@ -329,11 +331,31 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		return false;
 	}
 	
+	/**
+	 * 设置当前link,如果link id有更新则返回true
+	 * @param linkid
+	 * @return
+	 */
 	private boolean setCurrentLink(int linkid) {
 		if(!isExistVehicle())
 			return false;
 		if(vehicle.getLinkID().intValue() != linkid) {
 			vehicle.setLinkID(Integer.valueOf(linkid));
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 设置当前速度,如速度有更新则返回true
+	 * @param speed
+	 * @return
+	 */
+	private boolean setSpeed(double speed) {
+		if(!isExistVehicle())
+			return false;
+		if(vehicle.getSpeed().doubleValue() != speed) {
+			vehicle.setSpeed(Double.valueOf(speed));
 			return true;
 		}
 		return false;

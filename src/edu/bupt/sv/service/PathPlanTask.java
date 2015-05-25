@@ -1,6 +1,5 @@
 package edu.bupt.sv.service;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,7 +22,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	
 	
 	private Integer vehicleId;
-	private List<Integer> tempLinks;
+	private Integer tempDestNodeId;
 	private Point startPoint;
 	private Point destPoint;
 	
@@ -40,11 +39,11 @@ public class PathPlanTask implements Runnable, MsgConstants {
 		this.tmAccessor = tmAccessor;
 	}
 
-	public void startTask(Point startPoint, Point destPoint, List<Integer> tempLinks) {
+	public void startTask(Point startPoint, Point destPoint, Integer tempDestNodeId) {
 		// 初始化
 		tempDestChangeACK = false;
 		finalDestChangeACK = false;
-		this.tempLinks = tempLinks;
+		this.tempDestNodeId = tempDestNodeId;
 		// 设置起点和终点
 		this.startPoint = startPoint;
 		this.destPoint = destPoint;
@@ -71,11 +70,8 @@ public class PathPlanTask implements Runnable, MsgConstants {
 		case LOCAL_MSG_START_PLAN:
 			handleStartPlan();
 			break;
-		case MSG_CHANGE_DEST:
-			handleReceiveNewDest((Boolean) msg.obj);
-			break;
 		case MSG_ON_RECEIVE:
-			handleReceiveNewPath((PathInfo) msg.obj);
+			handleOnReceive(((Integer) msg.arg1).intValue(), msg.obj);
 			break;
 		case MSG_ON_ERROR:
 			handleOnError();
@@ -86,22 +82,25 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	private void handleStartPlan() {
 		tmAccessor.setJobHandler(mLocalHandler);
 		// 告知TM临时终点
-		tmAccessor.requestChangeDest(vehicleId, tempLinks, true);
+		tmAccessor.requestChangeDest(vehicleId, tempDestNodeId);
 		// 进行路径规划
 		pfAccessor.planPath(startPoint.latitude, startPoint.longitude, destPoint.latitude, destPoint.longitude);
 	}
 	
-	private void handleReceiveNewPath(PathInfo newPathInfo) {
-		this.pathInfo = newPathInfo;
-		// 告知TM最终的终点和路径
-		tmAccessor.requestChangeDest(vehicleId, tempLinks, false);
-	}
-	
-	private void handleReceiveNewDest(Boolean isTemp) {
-		if(isTemp.booleanValue())
+	private void handleOnReceive(int dataType, Object obj) {
+		switch(dataType) {
+		case DATA_TM_DEST_ACK:
 			tempDestChangeACK = true;
-		else
+			break;
+		case DATA_TM_PATH_ACK:
 			finalDestChangeACK = true;
+			break;
+		case DATA_PATH_PLAN:
+			this.pathInfo = (PathInfo) obj;
+			// 告知TM最终的终点和路径
+			tmAccessor.requestChangePath(vehicleId, this.pathInfo.links);
+			break;
+		}
 		if (tempDestChangeACK && finalDestChangeACK) {
 			// 改变终点完成
 			// 此时必然有新的路径，没有就出错了

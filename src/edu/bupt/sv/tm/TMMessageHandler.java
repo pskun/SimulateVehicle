@@ -241,9 +241,15 @@ public class TMMessageHandler implements NetworkConstants {
 		return -1;
 	}
 
+	/**
+	 * 发送改变路径的消息
+	 * @param Index 车辆ID
+	 * @param LS link id 列表
+	 * @param CS node id 列表，传空列表即可
+	 * @return
+	 */
 	public int sendChangePath(List<Integer> Index, List<List<Integer>> LS,
 			List<List<Integer>> CS)
-	// 发送改变路径消息
 	{
 		Results results = JsonMessageSend.sendPubPath(Index, LS, CS);
 		String message_send = results.s;
@@ -252,7 +258,13 @@ public class TMMessageHandler implements NetworkConstants {
 		return -1;
 	}
 
-	public int sendChangeDst(List<Integer> Index, List<Integer> DID) // 发送改变终点消息
+	/**
+	 * 发送改变终点消息
+	 * @param Index 车辆ID
+	 * @param DID 终点的node id
+	 * @return
+	 */
+	public int sendChangeDst(List<Integer> Index, List<Integer> DID)
 	{
 		Results results = JsonMessageSend.sendPubDst(Index, DID);
 		String message_send = results.s;
@@ -335,95 +347,6 @@ public class TMMessageHandler implements NetworkConstants {
 		List<Integer> li = new ArrayList<Integer>();
 		li.add(1);
 		jm.sendSubVehicleConstantly(li);
-		/*
-		 * Map<Integer, CarRecord> info = new HashMap<Integer, CarRecord> ();
-		 * for (int i = 0; i < 10; i++){ info.put(i, new CarRecord(i)); }
-		 * updateVehicle (info); for (int i = 0; i < 10; i++){ CarRecord temp =
-		 * info.get(i);
-		 * System.out.println(temp.getCarId()+" "+temp.getLatitude()
-		 * +" "+temp.getLinkId()+" "
-		 * +temp.getLongtitude()+" "+temp.getOffset()+" "
-		 * +temp.getRemainEnergy()+" "+temp.getSpeed()+" "
-		 * +temp.getStatus()+" "+temp.getTime()); } Map<Integer, CS> info2 = new
-		 * HashMap<Integer, CS> (); for (int i = 0; i < 10; i++){ info2.put(i,
-		 * new CS(i,10,10,10,10)); } updateChargeStation(info2); for (int i = 0;
-		 * i < 10; i++){ CS temp = info2.get(i);
-		 * System.out.println(temp.getcsId(
-		 * )+" "+temp.getCapacity()+" "+temp.getFreeCount()+" "+temp.getqCount()
-		 * +" "+temp.getTotalCount()); }
-		 * 
-		 * Map<Integer, VehicleInfo> info3 = new HashMap<Integer,
-		 * VehicleInfo>(); for (int i = 0; i < 10; i++){ info3.put(i, new
-		 * VehicleInfo(i)); } updateVehicleInfo(info3); for (int i = 0; i < 10;
-		 * i++){ VehicleInfo temp = info3.get(i);
-		 * System.out.println(temp.getCarId
-		 * ()+" "+temp.getRunTime()+" "+temp.getBatteryAll
-		 * ()+" "+temp.getChargeTime() +" "+temp.getQueueTime()); }
-		 */
-		/*
-		 * try{ BufferedReader reader = new BufferedReader(new
-		 * InputStreamReader(System.in)); reader.readLine(); }catch (Exception
-		 * e){} Map<Integer, Double> allLinks = getLinkTrans(); for (int key :
-		 * allLinks.keySet()){ double value = allLinks.get(key);
-		 * System.out.println(key+"="+value); } try{ BufferedReader reader = new
-		 * BufferedReader(new InputStreamReader(System.in)); reader.readLine();
-		 * }catch (Exception e){} List<Integer> Cars = new ArrayList<Integer>();
-		 * Cars.add(0); Cars.add(1); List< List<Integer> > Lpath = new
-		 * ArrayList< List<Integer> > (); /*Integer[] path =
-		 * {3221628,-3221599,-3221559
-		 * ,-1692900,1692978,3221556,3219636,3221648,3221601,3219211,1694023,
-		 * 1692272,3221552,3221551,3221710
-		 * ,3221644,1692313,2226074,2225248,2225313,2228275,3221655 };
-		 * Lpath.add(Arrays.asList(path)); Integer[] path2 =
-		 * {2209901,2209911,2212327
-		 * ,1686042,-3221743,3221743,1686032,1686066,3221721,1686091,
-		 * 3221718,1690223,3219814,1690365,1690850,3221722,1690844,3221726};
-		 * Lpath.add(Arrays.asList(path2));
-		 */
-		/*
-		 * Integer[] path =
-		 * {1682091,-3221754,-1685041,1685055,3221751,1685097,3221740
-		 * ,1685162,3221735,3221729}; Lpath.add(Arrays.asList(path)); List<
-		 * Integer > cpath = new ArrayList<Integer> (); List< List<Integer> >
-		 * Lcpath = new ArrayList< List<Integer> >(); //Lcpath.add(cpath);
-		 * cpath.add(75); Lcpath.add(cpath); Double [] bat =
-		 * {29.821228853257303,16.649162545368313}; List<Double> Lbat =
-		 * Arrays.asList(bat); Double [] bal = {120.0, 120.0}; List<Double> Lbal
-		 * = Arrays.asList(bal); if
-		 * (newVehicleAndFails(Cars,Lpath,Lcpath,Lbat,Lbal) != null){
-		 * System.out.println("车辆没有新建完成"); } else System.out.println("车辆新建完成");
-		 * Lpath.clear(); cpath.clear(); Lcpath.clear();
-		 * 
-		 * Integer[] path2 =
-		 * {-3221754,-1685041,-3221752,-3221759,-1685120,1685432,3221761,
-		 * 3221749,1685453, 3221745,1685169, 3221732};
-		 * Lpath.add(Arrays.asList(path2)); Lcpath.add(cpath); try{
-		 * BufferedReader reader = new BufferedReader(new
-		 * InputStreamReader(System.in)); reader.readLine(); }catch (Exception
-		 * e){} if (changePathAndFails(Cars,Lpath,Lcpath) == null)
-		 * System.out.println("全部path改变完成"); else
-		 * System.out.println("path没有改变完成"); /* Integer[] itemsContent =
-		 * {0,1,2,3,4,5,6,7,8,9,}; List<Integer> items =
-		 * Arrays.asList(itemsContent); Map<Integer, Double> someLinks =
-		 * getLinkTrans(items); for (int key : someLinks.keySet()){ double value
-		 * = someLinks.get(key); System.out.println(key+"="+value); } List<
-		 * List<Integer> > ls = new ArrayList< List<Integer> >(), cs = new
-		 * ArrayList< List<Integer> >(); List<Integer> tempList = new
-		 * ArrayList<Integer>(); for (int i = 0; i < 5; i++){ cs.add(new
-		 * ArrayList<Integer>(tempList)); tempList.add(i); ls.add(new
-		 * ArrayList<Integer>(tempList)); } List<Double> cur = new
-		 * ArrayList<Double> (), all = new ArrayList<Double> (); for (int i = 0;
-		 * i < 5; i++){ cur.add(i + 0.5); all.add(i + 1.5); } if
-		 * (changePathAndFails(tempList,ls,cs) == null)
-		 * System.out.println("全部path改变完成"); else
-		 * System.out.println("path没有改变完成"); if (changeDstAndFails(tempList,new
-		 * ArrayList<Integer>(tempList)) == null)
-		 * System.out.println("全部dst改变完成"); else
-		 * System.out.println("dst没有改变完成"); if
-		 * (newVehicleAndFails(tempList,ls,cs,cur,all) == null)
-		 * System.out.println("全部车辆新建完成"); else System.out.println("车辆没有新建完成");
-		 */
-		// close();
 	}
 }
 
