@@ -54,8 +54,10 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 	
 	@Override
 	public boolean initVehicle(Integer vehicleId) {
-		if(!isThreadValid())
+		System.out.println("111111#15");
+		if(!isThreadValid()){
 			return false;
+		}
 		coreThread.sendMessage(MSG_INIT_VEHICLE, vehicleId);
 		return true;
 	}
@@ -99,6 +101,7 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 
 	@Override
 	public SparseArray<Vehicle> getVehicleList() {
+		System.out.println("1111112");
 		DataConfig dc = DataConfig.getInstance(mContext);
 		return dc.getVehicleList();
 	}
