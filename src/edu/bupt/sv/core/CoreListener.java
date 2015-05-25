@@ -19,7 +19,7 @@ public interface CoreListener {
 	void onLocationChanged(Point newPoint);
 	
 	/**
-	 * 车辆电量变化时的回调
+	 * 车辆其他变化时的回调
 	 * @param charge
 	 */
 	void onOtherInfoChanged(double charge, double speed, Integer linkId);
@@ -31,8 +31,16 @@ public interface CoreListener {
 	 */
 	void onPathChanged(boolean success, List<Point> paths, Point start, Point end);
 	
+	/**
+	 * 错误发生时的回调
+	 * @param errorCode 见ErrorConstants.java
+	 */
 	void onError(int errorCode);
-	
-	void onInitFinish(SparseArray<Node> nodes, SparseArray<Vehicle> vehicles);
-	
+
+	// 以下是调试时的临时接口
+	/**
+	 * 获得转向的路口的经纬度
+	 * @param crossPoint
+	 */
+	void onGetTurnNodeId(Point crossPoint, Point newStartPoint);
 }

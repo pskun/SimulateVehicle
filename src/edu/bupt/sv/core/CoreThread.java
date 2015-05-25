@@ -209,6 +209,8 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		Point startPoint = dataConfig.getEndPointOfLink(turnLinkId);
 		Integer endNodeId = vehicle.getEndPos();
 		Point endPoint = dataConfig.getLatLngOfNode(endNodeId);
+		// just for debug
+		coreListener.onGetTurnNodeId(dataConfig.getStartPointOfLink(turnLinkId), startPoint);
 		ppTask.startTask(startPoint, endPoint, tempDestNodeId);
 	}
 	
