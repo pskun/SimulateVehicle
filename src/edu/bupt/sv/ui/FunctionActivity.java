@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+
 import edu.bupt.sv.core.ApiFactory;
 import edu.bupt.sv.core.CoreApi;
 import edu.bupt.sv.core.CoreListener;
@@ -24,6 +25,7 @@ import edu.bupt.sv.utils.LogUtil;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
