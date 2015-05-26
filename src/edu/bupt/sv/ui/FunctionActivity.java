@@ -100,6 +100,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		public void onPathChanged(boolean success, List<Point> paths,
 				Point start, Point end) {
 			// TODO Auto-generated method stub
+			System.out.println("$$$$$$$$$$$$"+paths);
 			if(success==true){
 			uiHandler.obtainMessage(MSG_ON_PATH_CHANGE,paths).sendToTarget();
 			uiHandler.obtainMessage(MSG_ON_LOCATION_CHANGE,start).sendToTarget();
@@ -112,15 +113,16 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 				Integer linkId) {
 			// TODO Auto-generated method stub
 			
+			Double linkid = Double.parseDouble(linkId.toString());
+			Double[] info =new Double[]{charge,speed,linkid};
+			uiHandler.obtainMessage(MSG_ON_OTHERINFO_CHANGE,info).sendToTarget();
+					
 		}
 
 		@Override
 		public void onGetTurnNodeId(Point crossPoint, Point newStartPoint) {
 			// TODO Auto-generated method stub
-			
-			Double[] info =new Double[]{charge,speed};
-			uiHandler.obtainMessage(MSG_ON_OTHERINFO_CHANGE,info).sendToTarget();
-			
+					
 		}
 		
 	};
@@ -223,7 +225,9 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private void handleOnOtherinfoChanged(Object obj) {
 		// TODO Auto-generated method stub		
 		speed.setText("当前速度 ："+((Double[]) obj)[0]);
-		battery.setText("剩余电量"+((Double[]) obj)[1]);		
+		battery.setText("剩余电量 :"+((Double[]) obj)[1]);
+		Integer tmp = Integer.valueOf(((Double) obj).toString());
+		route.setText("当前路段 ："+ tmp);
 	}
 
 	private void handleOnPathChanged(List<Point> paths){

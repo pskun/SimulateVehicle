@@ -176,7 +176,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		points.add(0, startPoint);
 		points.add(endPoint);
 		if(coreListener != null) {
-			
+			System.out.println("#######"+points);
 			coreListener.onPathChanged(true, points, startPoint, endPoint);
 		}
 		// 订阅车辆信息
@@ -238,7 +238,6 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	private void onReceiveSubInfoData(SubInfo subInfo) {
 		// just for debug
 		// LogUtil.warn("Current link: " + subInfo.linkId);
-		 LogUtil.warn("@@SubInfo: " + subInfo.latitude + " " + subInfo.longitude);
 		// 当前linkid
 		setCurrentLink(subInfo.linkId);
 		// 当前位置

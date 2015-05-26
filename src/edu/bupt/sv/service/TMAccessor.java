@@ -144,7 +144,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 	}
 	
 	private boolean checkResponseCode(int code) {
-		LogUtil.verbose("respond code: " + code);
+		//LogUtil.verbose("respond code: " + code);
 		// ÅÐ¶ÏÏìÓ¦Âë
 		if (RES_SUCCESS_CODE != code && RES_PART_SUCCESS_CODE != code) {
 			if (coreHandler != null) {
