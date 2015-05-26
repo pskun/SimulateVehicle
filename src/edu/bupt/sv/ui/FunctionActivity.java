@@ -35,11 +35,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private static final int MSG_ON_LOCATION_CHANGE = 1;
 	private static final int MSG_ON_PATH_CHANGE =2;
 	private static final int MSG_ON_CHARGE_CHANGE =3;
+	private static final int MSG_ON_OTHERINFO_CHANGE =4;
 	//private static final int MSG_ON_DIRECTION_CHANGE =3;
 	
 	static final LatLng NKUT = new LatLng(23.979548, 120.696745);
@@ -48,6 +50,14 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
     private CoreApi api;
     private int vehicleid;
     private Marker carPosition;
+    
+    private TextView  vid;
+    private TextView  longitude;
+    private TextView  latitude;
+    private TextView  route;
+    private TextView  battery ;
+    private TextView  speed ;
+    
     
     PopupMenu popup = null;
     
@@ -90,8 +100,10 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		public void onPathChanged(boolean success, List<Point> paths,
 				Point start, Point end) {
 			// TODO Auto-generated method stub
+			if(success==true){
 			uiHandler.obtainMessage(MSG_ON_PATH_CHANGE,paths).sendToTarget();
 			uiHandler.obtainMessage(MSG_ON_LOCATION_CHANGE,start).sendToTarget();
+			}
 		
 		}
 		@Override
@@ -104,6 +116,9 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		public void onOtherInfoChanged(double charge, double speed,
 				Integer linkId) {
 			// TODO Auto-generated method stub
+			
+			Double[] info =new Double[]{charge,speed};
+			uiHandler.obtainMessage(MSG_ON_OTHERINFO_CHANGE,info).sendToTarget();
 			
 		}
 		
@@ -137,10 +152,17 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
          super.onCreate(savedInstanceState);
          setContentView(R.layout.function_page);
          DirectionView directionView = (DirectionView) this.findViewById(R.id.cv);
-         directionView.init(api);
          this.mContext = this.getApplicationContext();
          vehicleid = getIntent().getIntExtra("id", 0);
+         vid = (TextView) this.findViewById(R.id.vehicleid);
+         latitude = (TextView) this.findViewById(R.id.latitude);
+         longitude = (TextView) this.findViewById(R.id.longitude);
+         route = (TextView) this.findViewById(R.id.route);
+         battery = (TextView)this.findViewById(R.id.battery);
+         speed = (TextView)this.findViewById(R.id.speed);
+         vid.setText("车辆ID："+vehicleid);
          init();
+         directionView.init(api);
         ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
         
    	     final  Button moreMenu = (Button)this.findViewById(R.id.buttonservice);
@@ -192,18 +214,19 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			//System.out.println("111111#32");
 			handleOnLocationChanged((Point) msg.obj);
 			break;
-		case MSG_ON_CHARGE_CHANGE:
-			handleOnChargeChanged(msg.obj);
+		case MSG_ON_OTHERINFO_CHANGE:
+			handleOnOtherinfoChanged(msg.obj);
 		}
 	}
 	
-	private void handleOnChargeChanged(Object obj) {
-		// TODO Auto-generated method stub
-		
+	private void handleOnOtherinfoChanged(Object obj) {
+		// TODO Auto-generated method stub		
+		speed.setText("当前速度 ："+((Double[]) obj)[0]);
+		battery.setText("剩余电量"+((Double[]) obj)[1]);		
 	}
 
 	private void handleOnPathChanged(List<Point> paths){
-		//System.out.println("111111#35");
+		System.out.println("111111#35"+paths);
 		PolylineOptions rectOptions = new PolylineOptions();
 		for(int i=0;i<paths.size();i++){
 			rectOptions.add(new LatLng(paths.get(i).latitude,paths.get(i).longitude));			
@@ -218,6 +241,9 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		LatLng Position = new LatLng(newPoint.latitude, newPoint.longitude);  
 		carPosition= map.addMarker(new MarkerOptions()  
         .position(Position)); 
+		latitude.setText("当前经度： "+ newPoint.longitude);
+		longitude.setText("当前维度："+newPoint.latitude);
+		
 		//map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position, 16));
 	}
 	
