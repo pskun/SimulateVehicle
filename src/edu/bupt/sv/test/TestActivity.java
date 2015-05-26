@@ -68,12 +68,6 @@ public class TestActivity extends Activity {
 		}
 
 		@Override
-		public void onInitFinish(SparseArray<Node> nodes,
-				SparseArray<Vehicle> vehicles) {
-			// TODO Auto-generated method stub
-		}
-
-		@Override
 		public void onPathChanged(boolean success, List<Point> paths,
 				Point start, Point end) {
 			// TODO Auto-generated method stub
@@ -83,6 +77,12 @@ public class TestActivity extends Activity {
 		@Override
 		public void onOtherInfoChanged(double charge, double speed,
 				Integer linkId) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onGetTurnNodeId(Point crossPoint, Point newStartPoint) {
 			// TODO Auto-generated method stub
 			
 		}

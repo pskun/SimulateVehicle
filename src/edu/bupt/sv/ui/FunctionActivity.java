@@ -106,15 +106,16 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			}
 		
 		}
-		@Override
-		public void onInitFinish(SparseArray<Node> nodes,
-				SparseArray<Vehicle> vehicles) {
-			// TODO Auto-generated method stub
-		}
 
 		@Override
 		public void onOtherInfoChanged(double charge, double speed,
 				Integer linkId) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onGetTurnNodeId(Point crossPoint, Point newStartPoint) {
 			// TODO Auto-generated method stub
 			
 			Double[] info =new Double[]{charge,speed};
