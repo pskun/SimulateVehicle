@@ -21,9 +21,9 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 	private Handler jobHandler;
 	
 	private int nextVehicleListSendId;
-	private int nextInitVehicleSendId;
 	private int nextChangeDestSendId;
 	private int nextChangePathSendId;
+	private Set<Integer> nextInitVehicleSendSet;
 	// 订阅车辆的ID集合，该集合容量为5
 	private Set<Integer> subVehicleSet; 
 	
@@ -33,7 +33,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 			LogUtil.verbose("tm on receive data, ID: " + ID);
 			if (ID == nextVehicleListSendId) {
 				handleVehicleListNTY(NTY);
-			} else if (ID == nextInitVehicleSendId) {
+			} else if (nextInitVehicleSendSet.contains(ID)) {
 				handleInitVehicleNTY(NTY);
 			} else if (ID == nextChangeDestSendId) {
 				if(checkResponseCode(NTY.NTY.Code)) {
@@ -66,12 +66,15 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		}
 		tmMsgHandler = new TMMessageHandler(tmListener);
 		nextVehicleListSendId = -1;
-		nextInitVehicleSendId = -1;
 		nextChangeDestSendId = -1;
 		nextChangePathSendId = -1;
 		
 		if(null != subVehicleSet) subVehicleSet.clear();
+		else nextInitVehicleSendSet = new HashSet<Integer>(5);
+		
+		if(null != subVehicleSet) subVehicleSet.clear();
 		else subVehicleSet = new HashSet<Integer>(5);
+		
 		LogUtil.verbose("tmAccessor: initialize tmAccessor done.");
 	}
 
@@ -81,9 +84,10 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 			tmMsgHandler = null;
 		}
 		nextVehicleListSendId = -1;
-		nextInitVehicleSendId = -1;
 		nextChangeDestSendId = -1;
 		nextChangePathSendId = -1;
+		
+		if(null != nextInitVehicleSendSet) nextInitVehicleSendSet.clear();
 		
 		if(null != subVehicleSet) subVehicleSet.clear();
 	}
@@ -108,7 +112,8 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 			return true;
 		List<Integer> vi = new ArrayList<Integer>();
 		vi.add(vehicleId);
-		nextInitVehicleSendId = tmMsgHandler.sendSubVehicleConstantly(vi);
+		int nextInitVehicleSendId = tmMsgHandler.sendSubVehicleConstantly(vi);
+		nextInitVehicleSendSet.add(Integer.valueOf(nextInitVehicleSendId));
 		subVehicleSet.add(vehicleId);
 		LogUtil.verbose("TMAccessor: message of requestAllVehicle was sent, id: " + nextInitVehicleSendId);
 		return true;
@@ -144,7 +149,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 	}
 	
 	private boolean checkResponseCode(int code) {
-		LogUtil.verbose("respond code: " + code);
+		// LogUtil.verbose("respond code: " + code);
 		// 判断响应码
 		if (RES_SUCCESS_CODE != code && RES_PART_SUCCESS_CODE != code) {
 			if (coreHandler != null) {

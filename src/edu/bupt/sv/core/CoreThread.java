@@ -18,6 +18,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 
@@ -237,13 +238,16 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	
 	private void onReceiveSubInfoData(SubInfo subInfo) {
 		// just for debug
-		// LogUtil.warn("Current link: " + subInfo.linkId);
-		 LogUtil.warn("@@SubInfo: " + subInfo.latitude + " " + subInfo.longitude);
+		Log.d("DEBUG", "Subscribe Information below");
+		Log.d("DEBUG", "latitude: " + subInfo.latitude);
+		Log.d("DEBUG", "longitude: " + subInfo.longitude);
+		Log.d("DEBUG", "charge: " + subInfo.currentCharge);
+		Log.d("DEBUG", "speed: " + subInfo.speed);
+		Log.d("DEBUG", "link id: " + subInfo.linkId);
 		// 当前linkid
 		setCurrentLink(subInfo.linkId);
 		// 当前位置
 		if (setLocation(subInfo.latitude, subInfo.longitude)) {
-			LogUtil.warn("##SubInfo: " + subInfo.latitude + " " + subInfo.longitude);
 			coreListener.onLocationChanged(new Point(subInfo.latitude, subInfo.longitude));
 		}
 		// 当前电量
