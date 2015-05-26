@@ -111,15 +111,13 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		public void onOtherInfoChanged(double charge, double speed,
 				Integer linkId) {
 			// TODO Auto-generated method stub
-			
+			Double[] info =new Double[]{charge,speed};
+			uiHandler.obtainMessage(MSG_ON_OTHERINFO_CHANGE,info).sendToTarget();
 		}
 
 		@Override
 		public void onGetTurnNodeId(Point crossPoint, Point newStartPoint) {
 			// TODO Auto-generated method stub
-			
-			Double[] info =new Double[]{charge,speed};
-			uiHandler.obtainMessage(MSG_ON_OTHERINFO_CHANGE,info).sendToTarget();
 			
 		}
 		
