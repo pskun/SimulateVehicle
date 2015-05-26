@@ -121,8 +121,6 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 
 		@Override
 		public void onGetTurnNodeId(Point crossPoint, Point newStartPoint) {
-			// TODO Auto-generated method stub
-					
 		}
 		
 	};
