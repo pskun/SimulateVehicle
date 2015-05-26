@@ -1,7 +1,9 @@
 package edu.bupt.sv.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import edu.bupt.sv.core.MsgConstants;
 import edu.bupt.sv.entity.SubInfo;
@@ -22,6 +24,8 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 	private int nextInitVehicleSendId;
 	private int nextChangeDestSendId;
 	private int nextChangePathSendId;
+	// 订阅车辆的ID集合，该集合容量为5
+	private Set<Integer> subVehicleSet; 
 	
 	private TMListener tmListener = new TMListener() {
 		@Override
@@ -65,6 +69,9 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		nextInitVehicleSendId = -1;
 		nextChangeDestSendId = -1;
 		nextChangePathSendId = -1;
+		
+		if(null != subVehicleSet) subVehicleSet.clear();
+		else subVehicleSet = new HashSet<Integer>(5);
 		LogUtil.verbose("tmAccessor: initialize tmAccessor done.");
 	}
 
@@ -77,6 +84,8 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		nextInitVehicleSendId = -1;
 		nextChangeDestSendId = -1;
 		nextChangePathSendId = -1;
+		
+		if(null != subVehicleSet) subVehicleSet.clear();
 	}
 	
 	public void setJobHandler(Handler jobHandler) {
@@ -85,36 +94,27 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 	
 	public boolean requestAllVehicle() {
 		int size = 200;
-		if (tmMsgHandler == null) {
-			LogUtil.error("requestAllVehicle: tmMsgHanlder is null.");
-			return false;
-		}
 		nextVehicleListSendId = tmMsgHandler.sendSubAllVehicle(size);
 		LogUtil.verbose("TMAccessor: message of requestAllVehicle was sent, id: " + nextVehicleListSendId);
 		return true;
 	}
 
 	public boolean requestInitVehicle(Integer vehicleId) {
-		if (tmMsgHandler == null) {
-			LogUtil.error("requestInitVehicle: tmMsgHanlder is null.");
-			return false;
-		}
 		if (vehicleId == null) {
 			LogUtil.error("requestInitVehicle: vehicle id is null.");
 			return false;
 		}
+		if (subVehicleSet.contains(vehicleId))
+			return true;
 		List<Integer> vi = new ArrayList<Integer>();
 		vi.add(vehicleId);
 		nextInitVehicleSendId = tmMsgHandler.sendSubVehicleConstantly(vi);
+		subVehicleSet.add(vehicleId);
 		LogUtil.verbose("TMAccessor: message of requestAllVehicle was sent, id: " + nextInitVehicleSendId);
 		return true;
 	}
 
 	public boolean requestChangeDest(Integer vehicleId, Integer destNodeId) {
-		if (tmMsgHandler == null) {
-			LogUtil.error("requestChangeDest: tmMsgHanlder is null.");
-			return false;
-		}
 		if (vehicleId == null) {
 			LogUtil.error("requestChangeDest: vehicle id is null.");
 			return false;
@@ -129,10 +129,6 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 	}
 	
 	public boolean requestChangePath(Integer vehicleId, List<Integer> links) {
-		if (tmMsgHandler == null) {
-			LogUtil.error("requestChangeDest: tmMsgHanlder is null.");
-			return false;
-		}
 		if (vehicleId == null) {
 			LogUtil.error("requestChangeDest: vehicle id is null.");
 			return false;
