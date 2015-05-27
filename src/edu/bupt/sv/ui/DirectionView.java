@@ -26,7 +26,7 @@ public class DirectionView extends View implements EntityConstants{
     int innerRadius = 0;
     private float innerCircleRadius = 0;
     private float smallCircle = 10;
-    public Dir dir = Dir.UP;
+    public Dir dir = Dir.CENTER;
     
  
 
@@ -386,7 +386,7 @@ public class DirectionView extends View implements EntityConstants{
      * 
      */
     public enum Dir {
-        UP, DOWN, LEFT, RIGHT, CENTER, UNDEFINE
+    	CENTER,UP, DOWN, LEFT, RIGHT, UNDEFINE
     }
 
 }

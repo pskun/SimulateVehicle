@@ -24,13 +24,14 @@
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
+           android:text="当前电量：0"
         />
          <TextView 
            android:id="@+id/route"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
-           android:text="当前路段：1"
+           android:text="当前路段：0"
          />
       </LinearLayout>
       
@@ -44,7 +45,7 @@
            android:id="@+id/longitude"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
-           android:text="经度：100"  
+           android:text="经度：0"  
            android:layout_weight="1"
            android:layout_alignParentLeft="true"
            android:layout_alignParentTop="true"
@@ -54,14 +55,14 @@
            android:id="@+id/latitude"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
-           android:text="纬度：100"
+           android:text="纬度：0"
            android:layout_weight="1"
         />
        <TextView 
            android:id="@+id/speed"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
-           android:text="当前速度：50"
+           android:text="当前速度：0"
            android:layout_weight="1"
            />
       </LinearLayout>
@@ -128,5 +129,5 @@
            android:layout_gravity="bottom"
            android:layout_weight="1"
            android:text="服务" /> 
-   </LinearLayout>
+   </LinearLayout>  
 </LinearLayout>
