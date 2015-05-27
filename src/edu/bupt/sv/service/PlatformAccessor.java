@@ -18,6 +18,7 @@ import edu.bupt.sv.utils.CommonUtil;
 import edu.bupt.sv.utils.LogUtil;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 public class PlatformAccessor implements NetworkConstants, MsgConstants {
 
@@ -64,6 +65,8 @@ public class PlatformAccessor implements NetworkConstants, MsgConstants {
 				}
 				return;
 			}
+			// just for debug
+			Log.d("PATH JSON", response.toString());
 			try {
 				JSONArray ja = response.getJSONArray(FIELD_PATHNODE);
 				JSONArray ls = response.getJSONArray(FIELD_LINKS);
