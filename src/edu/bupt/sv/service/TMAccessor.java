@@ -37,6 +37,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 				handleInitVehicleNTY(NTY);
 			} else if (ID == nextChangeDestSendId) {
 				if(checkResponseCode(NTY.NTY.Code)) {
+					// ·¢ËÍ¸øjobHandler
 					jobHandler.obtainMessage(MSG_ON_RECEIVE, DATA_TM_DEST_ACK, -1);
 				} else {
 					// TODO

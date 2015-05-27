@@ -198,6 +198,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	 * @param direction
 	 */
 	private void handlePathPlan(Integer direction) {
+		LogUtil.verbose("coreThread: start path plan. direction: " + direction);
 		// 获得当前的linkid
 		Integer currentLinkId = vehicle.getLinkID();
 		if(!CommonUtil.isLinkNodeIdValie(currentLinkId)) {
