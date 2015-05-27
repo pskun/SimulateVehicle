@@ -144,8 +144,14 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		isRunning = false;
 		if(tmAccessor != null) {
 			tmAccessor.destroy();
+			tmAccessor = null;
 		}
-		// TODO
+		if(ppTask != null) {
+			ppTask.destroy();
+			ppTask = null;
+		}
+		// ³µÁ¾ÖÃÎª¿Õ
+		this.vehicle = null;
 		Looper.myLooper().quit();
 		LogUtil.verbose("coreThread is now destroyed.");
 	}

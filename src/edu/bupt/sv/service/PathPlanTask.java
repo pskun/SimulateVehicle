@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import edu.bupt.sv.core.MsgConstants;
 import edu.bupt.sv.entity.PathInfo;
 import edu.bupt.sv.entity.Point;
+import edu.bupt.sv.utils.LogUtil;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -13,6 +14,7 @@ import android.os.Message;
 public class PathPlanTask implements Runnable, MsgConstants {
 
 	private static final int LOCAL_MSG_START_PLAN = 1;
+	private static final int LOCAL_MSG_QUIT = 2;
 	
 	private Handler coreHandler;
 	private Handler mLocalHandler;
@@ -51,6 +53,21 @@ public class PathPlanTask implements Runnable, MsgConstants {
 		threadPool.execute(this);
 	}
 	
+	public void destroy() {
+		if(null != tmAccessor) {
+			tmAccessor.destroy();
+			tmAccessor = null;
+		}
+		if(null != pfAccessor) {
+			pfAccessor.destroy();
+			pfAccessor = null;
+		}
+		if(mLocalHandler!=null) {
+			mLocalHandler.removeCallbacksAndMessages(null);
+			mLocalHandler.obtainMessage(LOCAL_MSG_QUIT).sendToTarget();
+		}
+	}
+	
 	@Override
 	public void run() {
 		Looper.prepare();
@@ -75,6 +92,9 @@ public class PathPlanTask implements Runnable, MsgConstants {
 			break;
 		case MSG_ON_ERROR:
 			handleOnError();
+			break;
+		case LOCAL_MSG_QUIT:
+			handleOnQuit();
 			break;
 		}
 	}
@@ -110,10 +130,17 @@ public class PathPlanTask implements Runnable, MsgConstants {
 			}
 			// 收到新的路径，告知coreThread
 			coreHandler.obtainMessage(MSG_ON_RECEIVE, DATA_PATH_PLAN, -1, pathInfo);
+			// 退出
+			mLocalHandler.obtainMessage(LOCAL_MSG_QUIT).sendToTarget();
 		}
 	}
 	
 	private void handleOnError() {
 		// TODO
+	}
+	
+	private void handleOnQuit() {
+		Looper.myLooper().quit();
+		LogUtil.verbose("ppTask is now destroyed.");
 	}
 }

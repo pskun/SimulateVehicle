@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -28,6 +29,7 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +38,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private static final int MSG_ON_LOCATION_CHANGE = 1;
@@ -58,7 +61,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
     private TextView  battery ;
     private TextView  speed ;
     
-    
+     
     PopupMenu popup = null;
     
 	private Handler uiHandler = new Handler() {
@@ -72,9 +75,21 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private void init() {
 		api = ApiFactory.getInstance(mContext);
 		api.setListener(coreListener);
-		//System.out.println("1111118");
 		api.initApi();
 	}
+	
+	private void reset() {
+		api = ApiFactory.getInstance(mContext);
+		api.destroyApi();
+	}
+	
+	
+	@Override
+	public void onBackPressed() {
+		reset();
+		super.onBackPressed();
+	}
+	
     
     private CoreListener coreListener = new CoreListener() {
 		
@@ -96,16 +111,16 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			// TODO Auto-generated method stub
 			
 		}
+		
 		@Override
 		public void onPathChanged(boolean success, List<Point> paths,
 				Point start, Point end) {
 			// TODO Auto-generated method stub
-			System.out.println("$$$$$$$$$$$$"+paths);
+			
 			if(success==true){
 			uiHandler.obtainMessage(MSG_ON_PATH_CHANGE,paths).sendToTarget();
 			uiHandler.obtainMessage(MSG_ON_LOCATION_CHANGE,start).sendToTarget();
-			}
-		
+			}	
 		}
 
 		@Override
@@ -121,6 +136,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 
 		@Override
 		public void onGetTurnNodeId(Point crossPoint, Point newStartPoint) {
+			 
 		}
 		
 	};
@@ -131,7 +147,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			int clickId = v.getId();
 			switch(clickId)
 			{
-			case R.id.buttonservice:
+			case R.id.getcharge:
 				//getService();
 				break;
 			case R.id.vehicle_list_btn:
@@ -146,39 +162,52 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			}
 		}
 	};
-	
-	
+
+	 
    @Override
     protected void onCreate(Bundle savedInstanceState) {	 
          super.onCreate(savedInstanceState);
          setContentView(R.layout.function_page);
+         
          DirectionView directionView = (DirectionView) this.findViewById(R.id.cv);
          this.mContext = this.getApplicationContext();
          vehicleid = getIntent().getIntExtra("id", 0);
          vid = (TextView) this.findViewById(R.id.vehicleid);
          latitude = (TextView) this.findViewById(R.id.latitude);
          longitude = (TextView) this.findViewById(R.id.longitude);
+         
+         Log.e("latitude", latitude.toString());
+         
          route = (TextView) this.findViewById(R.id.route);
          battery = (TextView)this.findViewById(R.id.battery);
          speed = (TextView)this.findViewById(R.id.speed);
+         
          vid.setText("车辆ID："+vehicleid);
          init();
          directionView.init(api);
-        ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
+         
+         ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
+        
         
    	     final  Button moreMenu = (Button)this.findViewById(R.id.buttonservice);
-         moreMenu.setOnClickListener(new OnClickListener() {
-         
+         moreMenu.setOnClickListener(new OnClickListener() {   
          @Override
          public void onClick(View moreMenu){
                  PopupMenu popup = new PopupMenu(FunctionActivity.this, moreMenu);
                  popup.getMenuInflater()
                      .inflate(R.layout.service_menu, popup.getMenu());
 
-                 //registering popup with OnMenuItemClickListener
+                  //registering popup with OnMenuItemClickListener
                  popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                      public boolean onMenuItemClick(MenuItem item) {
-                
+                    	 switch(item.getItemId()){  
+                    	 case R.id.getcharge :
+                    		 
+                    		 break;
+                    	 case R.id.changedes :
+                    		
+                    		 break;
+                    	 }         
                          return true;
                      }
                  });
@@ -198,9 +227,18 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
     	    		  .title("NODE").snippet(String.valueOf(node.getId()))
     	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.node)));
       }  
+     
+      map.setOnMarkerClickListener(new OnMarkerClickListener() {
+          @Override
+          public boolean onMarkerClick(Marker arg0) {
+              // TODO Auto-generated method stub
+              arg0.hideInfoWindow();
+              return true;
+          }
+      });
+      
       LatLng NKUT = new LatLng(29.542324,-98.576859);      
       map.moveCamera(CameraUpdateFactory.newLatLngZoom(NKUT, 16));
-      //System.out.println("111111#14");
       api.initVehicle(vehicleid);
       
 	}
@@ -208,11 +246,9 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private void handleLocalMessage(Message msg) {
 		switch(msg.what) {
 		case MSG_ON_PATH_CHANGE:
-			//System.out.println("111111#31");
 			handleOnPathChanged((List<Point>) msg.obj);			
 			break;
 		case MSG_ON_LOCATION_CHANGE:
-			//System.out.println("111111#32");
 			handleOnLocationChanged((Point) msg.obj);
 			break;
 		case MSG_ON_OTHERINFO_CHANGE:
@@ -221,33 +257,35 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	}
 	
 	private void handleOnOtherinfoChanged(Object obj) {
-		// TODO Auto-generated method stub		
-		speed.setText("当前速度 ："+((Double[]) obj)[0]);
-		battery.setText("剩余电量 :"+((Double[]) obj)[1]);
-		Integer tmp = Integer.valueOf(((Double) obj).toString());
-		route.setText("当前路段 ："+ tmp);
+		// TODO Auto-generated method stub
+		Double[] info = (Double[]) obj;
+		battery.setText("剩余电量 :"+info[0]);
+		speed.setText("当前速度 ："+info[1]);	
+		int temp = info[2].intValue();
+		route.setText("当前路段 ："+ temp);
 	}
 
 	private void handleOnPathChanged(List<Point> paths){
-		System.out.println("111111#35"+paths);
+		
 		PolylineOptions rectOptions = new PolylineOptions();
 		for(int i=0;i<paths.size();i++){
 			rectOptions.add(new LatLng(paths.get(i).latitude,paths.get(i).longitude));			
 		}
 		Polyline polyline = map.addPolyline(rectOptions);
+		
 	}
 	
 	private void handleOnLocationChanged(Point newPoint){
-		//System.out.println("111111#36");
-		if(carPosition!=null){
-		carPosition.remove();}
+		latitude.setText("当前经度： " + newPoint.longitude);
+		longitude.setText("当前维度：" + newPoint.latitude);
+		LogUtil.error("onLocationChange:" + newPoint.latitude + " " + newPoint.longitude);
+		if(carPosition!=null)
+			carPosition.remove();
 		LatLng Position = new LatLng(newPoint.latitude, newPoint.longitude);  
-		carPosition= map.addMarker(new MarkerOptions()  
-        .position(Position)); 
-		latitude.setText("当前经度： "+ newPoint.longitude);
-		longitude.setText("当前维度："+newPoint.latitude);
-		
-		//map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position, 16));
+		carPosition= map.addMarker(new MarkerOptions().position(Position)); 
+		// latitude.setText("当前经度： " + newPoint.longitude);
+		// longitude.setText("当前维度：" + newPoint.latitude);
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position, 16));
 	}
 	
 }

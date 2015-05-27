@@ -284,7 +284,7 @@ public class DataConfig {
 				Vehicle vehicle = new Vehicle(id, startPos, endPos, linkID,
 						status, model, energyCost, totalEnergy, charge,
 						reservedEnergy, speed, path);
-				System.out.print("Vehicle id: " + id);
+				// System.out.print("Vehicle id: " + id);
 				vehicleList.append(vehicle.getId(), vehicle);
 				line = bufReader.readLine();
 			}

@@ -116,4 +116,12 @@ public class PlatformAccessor implements NetworkConstants, MsgConstants {
 		client.setMaxRetriesAndTimeout(MAX_RETRY_TIMES, SERVICE_TIMEOUT);
 		client.get(context, url, planResHandler);
 	}
+	
+	public void destroy() {
+		if(client != null) {
+			client.cancelRequests(context, true);
+			client = null;
+		}
+		targetHandler = null;
+	}
 }

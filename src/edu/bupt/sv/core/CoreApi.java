@@ -96,6 +96,7 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 			coreThread.destroy();
 			coreListener = null;
 		}
+		coreThread = null;
 	}
 
 	@Override
