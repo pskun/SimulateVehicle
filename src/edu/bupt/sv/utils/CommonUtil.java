@@ -29,4 +29,8 @@ public final class CommonUtil {
 		double ret = latlng.doubleValue() / 1000000;
 		return ret;
 	}
+	
+	public static boolean isLinkNodeIdValie(Integer id) {
+		return (id!=null && id.intValue()!=0);
+	}
 }

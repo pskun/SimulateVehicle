@@ -54,7 +54,6 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 	
 	@Override
 	public boolean initVehicle(Integer vehicleId) {
-		//System.out.println("111111#15");
 		if(!isThreadValid()){
 			return false;
 		}

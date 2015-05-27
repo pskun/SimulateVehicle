@@ -113,6 +113,11 @@ public class DataConfig {
 		return getLatLngOfNode(nodeId);
 	}
 	
+	/**
+	 * 获得link的终点的node id
+	 * @param linkId
+	 * @return
+	 */
 	public Integer getEndNodeIdOfLink(Integer linkId) {
 		Assert.assertNotNull(linkId);
 		Assert.assertNotNull(linkInfo);
@@ -150,6 +155,11 @@ public class DataConfig {
 			points.add(point);
 		}
 		return points;
+	}
+	
+	public double getLinkLength(Integer linkId) {
+		Link link = linkInfo.get(linkId.intValue());
+		return link.getLength();
 	}
 	
 	private boolean initMapData() {

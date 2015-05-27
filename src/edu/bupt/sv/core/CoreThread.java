@@ -108,6 +108,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			handlePathPlan((Integer) msg.obj);
 			break;
 		case MSG_CHANGE_DEST:
+			handleChangeDest((Integer) msg.obj);
 			break;
 		case MSG_ON_RECEIVE:
 			handleReceiveData(msg.arg1, msg.obj);
@@ -177,7 +178,6 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		points.add(0, startPoint);
 		points.add(endPoint);
 		if(coreListener != null) {
-			System.out.println("#######"+points);
 			coreListener.onPathChanged(true, points, startPoint, endPoint);
 		}
 		// 订阅车辆信息
@@ -194,18 +194,25 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	private void handlePathPlan(Integer direction) {
 		// 获得当前的linkid
 		Integer currentLinkId = vehicle.getLinkID();
+		if(!CommonUtil.isLinkNodeIdValie(currentLinkId)) {
+			LogUtil.warn("current link id " + currentLinkId + " is invalid.");
+			return;
+		}
 		// 获得规划的路径的下一个link
 		Integer nextLinkId = vehicle.getNextLinkOfPath(currentLinkId);
 		// 获取期望转向的下一个link
 		Integer turnLinkId = dataConfig.getTurnLink(currentLinkId, direction.intValue());
 		// 不能转向或者与路径规划相同
-		if(nextLinkId==null || turnLinkId==null || nextLinkId.equals(turnLinkId)) {
+		if(CommonUtil.isLinkNodeIdValie(nextLinkId)
+				|| CommonUtil.isLinkNodeIdValie(turnLinkId)
+				|| nextLinkId.equals(turnLinkId)) {
 			coreListener.onPathChanged(false, null, null, null);
 			LogUtil.verbose("turn new path failed.");
 			String hint = CommonUtil.catString("currentLinkId: ", currentLinkId, "nextLink: ", nextLinkId, "turnLinkId: ",turnLinkId);
 			LogUtil.verbose(hint);
 			return;
 		}
+		LogUtil.verbose("next link length: " + dataConfig.getLinkLength(nextLinkId));
 		Integer tempDestNodeId = dataConfig.getEndNodeIdOfLink(turnLinkId);
 		Point startPoint = dataConfig.getEndPointOfLink(turnLinkId);
 		Integer endNodeId = vehicle.getEndPos();
