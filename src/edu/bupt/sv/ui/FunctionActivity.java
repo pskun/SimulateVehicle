@@ -45,6 +45,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private static final int MSG_ON_PATH_CHANGE =2;
 	private static final int MSG_ON_CHARGE_CHANGE =3;
 	private static final int MSG_ON_OTHERINFO_CHANGE =4;
+	private static final int MSG_ON_GET_TURNNODEID =5;
 	//private static final int MSG_ON_DIRECTION_CHANGE =3;
 	
 	static final LatLng NKUT = new LatLng(23.979548, 120.696745);
@@ -115,12 +116,12 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		@Override
 		public void onPathChanged(boolean success, List<Point> paths,
 				Point start, Point end) {
-			// TODO Auto-generated method stub
-			
+			// TODO Auto-generated method stub		
 			if(success==true){
 			uiHandler.obtainMessage(MSG_ON_PATH_CHANGE,paths).sendToTarget();
 			uiHandler.obtainMessage(MSG_ON_LOCATION_CHANGE,start).sendToTarget();
-			}	
+			}else{
+			LogUtil.toast(mContext, "不能向该方向转弯！");}
 		}
 
 		@Override
@@ -136,9 +137,10 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 
 		@Override
 		public void onGetTurnNodeId(Point crossPoint, Point newStartPoint) {
+			Point[] info = new Point[]{crossPoint,newStartPoint};
+			uiHandler.obtainMessage(MSG_ON_GET_TURNNODEID,info).sendToTarget();
 			 
-		}
-		
+		}	
 	};
 	
     private OnClickListener listener = new OnClickListener(){
@@ -253,6 +255,8 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			break;
 		case MSG_ON_OTHERINFO_CHANGE:
 			handleOnOtherinfoChanged(msg.obj);
+		case MSG_ON_GET_TURNNODEID:
+			handleOnGetTurnnodeid((Point[]) msg.obj);
 		}
 	}
 	
@@ -286,6 +290,14 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		// latitude.setText("当前经度： " + newPoint.longitude);
 		// longitude.setText("当前维度：" + newPoint.latitude);
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position, 16));
+	}
+	
+	private void handleOnGetTurnnodeid(Point[] points){
+		map.addMarker(new MarkerOptions().position(new LatLng(points[0].getLatitude(),points[0].getLongitude()))
+	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));
+		map.addMarker(new MarkerOptions().position(new LatLng(points[1].getLatitude(),points[1].getLongitude()))
+	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));
+		
 	}
 	
 }
