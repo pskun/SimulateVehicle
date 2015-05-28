@@ -158,6 +158,9 @@ public class DataConfig {
 	}
 	
 	public double getLinkLength(Integer linkId) {
+		if(linkId==null){
+			return 0;
+		}
 		Link link = linkInfo.get(linkId.intValue());
 		return link.getLength();
 	}

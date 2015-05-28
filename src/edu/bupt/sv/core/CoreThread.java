@@ -174,6 +174,11 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		Vehicle v = dataConfig.getVehicleFromConfig(vehicleId);
 		Assert.assertNotNull(v);
 		this.vehicle = v;
+		// 此时当前linkid为0,手动设置
+		vehicle.setLinkID(vehicle.getPath().get(0));
+		if(coreListener!=null) {
+			coreListener.onOtherInfoChanged(vehicle.getCharge(), vehicle.getSpeed().doubleValue(), vehicle.getLinkID());
+		}
 		// 给出车的初始化信息
 		List<Integer> pathLinks = vehicle.getPath();
 		List<Point> points = dataConfig.getPointsOfLink(pathLinks);
@@ -215,8 +220,14 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 				|| nextLinkId.intValue() == turnLinkId.intValue()) {
 			coreListener.onPathChanged(false, null, null, null);
 			LogUtil.verbose("turn new path failed.");
-			String hint = CommonUtil.catString("currentLinkId: ", currentLinkId, "nextLink: ", nextLinkId, "turnLinkId: ",turnLinkId);
+			String hint = CommonUtil.catString("currentLinkId: ", currentLinkId, " nextLink: ", nextLinkId, " turnLinkId: ",turnLinkId);
 			LogUtil.verbose(hint);
+			double currentLength = dataConfig.getLinkLength(currentLinkId);
+			double nextLength = dataConfig.getLinkLength(nextLinkId);
+			double turnLength = dataConfig.getLinkLength(turnLinkId);
+			Log.e("Link Length", "current length: " + currentLength);
+			Log.e("Link Length", "next length: " + nextLength);
+			Log.e("Link Length", "turn length: " + turnLength);
 			return;
 		}
 		LogUtil.verbose("next link length: " + dataConfig.getLinkLength(nextLinkId));
@@ -252,11 +263,11 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	
 	private void onReceiveSubInfoData(SubInfo subInfo) {
 		// just for debug
-		Log.d("DEBUG", "Subscribe Information below");
-		Log.d("DEBUG", "latitude: " + subInfo.latitude);
-		Log.d("DEBUG", "longitude: " + subInfo.longitude);
-		Log.d("DEBUG", "charge: " + subInfo.currentCharge);
-		Log.d("DEBUG", "speed: " + subInfo.speed);
+		// Log.d("DEBUG", "Subscribe Information below");
+		// Log.d("DEBUG", "latitude: " + subInfo.latitude);
+		// Log.d("DEBUG", "longitude: " + subInfo.longitude);
+		// Log.d("DEBUG", "charge: " + subInfo.currentCharge);
+		// Log.d("DEBUG", "speed: " + subInfo.speed);
 		Log.d("DEBUG", "link id: " + subInfo.linkId);
 		// 当前linkid
 		setCurrentLink(subInfo.linkId);

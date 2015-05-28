@@ -54,6 +54,9 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
     private CoreApi api;
     private int vehicleid;
     private Marker carPosition;
+    private Marker start;
+    private Marker end;
+    
     
     private TextView  vid;
     private TextView  longitude;
@@ -84,14 +87,12 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		api.destroyApi();
 	}
 	
-	
 	@Override
 	public void onBackPressed() {
 		reset();
 		super.onBackPressed();
 	}
 	
-    
     private CoreListener coreListener = new CoreListener() {
 		
 		@Override
@@ -164,6 +165,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			}
 		}
 	};
+	
 
 	 
    @Override
@@ -255,8 +257,10 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			break;
 		case MSG_ON_OTHERINFO_CHANGE:
 			handleOnOtherinfoChanged(msg.obj);
+			break;
 		case MSG_ON_GET_TURNNODEID:
 			handleOnGetTurnnodeid((Point[]) msg.obj);
+			break;
 		}
 	}
 	
@@ -270,18 +274,27 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	}
 
 	private void handleOnPathChanged(List<Point> paths){
-		
+		if(start!=null){
+			start.remove();
+		}
+		if(end !=null){
+			end.remove();
+		}	
 		PolylineOptions rectOptions = new PolylineOptions();
 		for(int i=0;i<paths.size();i++){
 			rectOptions.add(new LatLng(paths.get(i).latitude,paths.get(i).longitude));			
 		}
 		Polyline polyline = map.addPolyline(rectOptions);
+		start = map.addMarker(new MarkerOptions().position(new LatLng(paths.get(0).getLatitude(),paths.get(0).getLongitude()))
+	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.start)));
+		end = map.addMarker(new MarkerOptions().position(new LatLng(paths.get(paths.size()-1).getLatitude(),paths.get(paths.size()-1).getLongitude()))
+	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.end)));
 		
 	}
 	
 	private void handleOnLocationChanged(Point newPoint){
 		latitude.setText("当前经度： " + newPoint.longitude);
-		longitude.setText("当前维度：" + newPoint.latitude);
+		longitude.setText("当前纬度：" + newPoint.latitude);
 		LogUtil.error("onLocationChange:" + newPoint.latitude + " " + newPoint.longitude);
 		if(carPosition!=null)
 			carPosition.remove();
@@ -293,6 +306,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	}
 	
 	private void handleOnGetTurnnodeid(Point[] points){
+		System.out.println("turn+node#########"+points[0]);
 		map.addMarker(new MarkerOptions().position(new LatLng(points[0].getLatitude(),points[0].getLongitude()))
 	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));
 		map.addMarker(new MarkerOptions().position(new LatLng(points[1].getLatitude(),points[1].getLongitude()))
