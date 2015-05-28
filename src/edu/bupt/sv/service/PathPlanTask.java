@@ -1,8 +1,5 @@
 package edu.bupt.sv.service;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import edu.bupt.sv.core.MsgConstants;
 import edu.bupt.sv.entity.PathInfo;
 import edu.bupt.sv.entity.Point;
@@ -37,7 +34,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	
 	private PathInfo pathInfo = null;
 	
-	private ExecutorService threadPool = Executors.newSingleThreadExecutor();
+	private Thread jobThread;
 	
 	public PathPlanTask(Context ctx, Handler coreHandler, TMAccessor tmAccessor) {
 		super();
@@ -46,7 +43,12 @@ public class PathPlanTask implements Runnable, MsgConstants {
 		this.pfAccessor = new PlatformAccessor(ctx);
 	}
 
-	public void startTask(Integer vehicleId, Point startPoint, Point destPoint, Integer tempDestNodeId) {
+
+	public void startTask(Integer vehicleId,Point startPoint, Point destPoint, Integer tempDestNodeId) {
+		if(jobThread!=null && jobThread.isAlive()) {
+			handleOnQuit();
+		}
+
 		// 初始化
 		this.vehicleId = vehicleId;
 		tempDestChangeACK = false;
@@ -56,7 +58,8 @@ public class PathPlanTask implements Runnable, MsgConstants {
 		this.startPoint = startPoint;
 		this.destPoint = destPoint;
 		// 开始规划
-		threadPool.execute(this);
+		jobThread = new Thread(this);
+		jobThread.start();
 	}
 	
 	public void destroy() {
@@ -157,7 +160,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 			mLocalHandler.removeCallbacksAndMessages(null);
 		}
 		Looper.myLooper().quit();
-		threadPool.shutdownNow();
+		jobThread.interrupt();
 		mLocalHandler = null;
 		LogUtil.verbose("ppTask is now destroyed.");
 	}

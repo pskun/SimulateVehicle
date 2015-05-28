@@ -68,6 +68,8 @@ public class PlatformAccessor implements NetworkConstants, MsgConstants {
 		@Override
 		public void onSuccess(int statusCode, Header[] headers,
 				JSONObject response) {
+			// just for debug
+			Log.d("PATH JSON", response.toString());
 			if(!checkResponseStatus(response)) {
 				LogUtil.warn("response json data is wrong: status is not OK");
 				if(targetHandler != null) {
@@ -75,8 +77,6 @@ public class PlatformAccessor implements NetworkConstants, MsgConstants {
 				}
 				return;
 			}
-			// just for debug
-			Log.d("PATH JSON", response.toString());
 			try {
 				JSONArray ja = response.getJSONArray(FIELD_PATHNODE);
 				JSONArray ls = response.getJSONArray(FIELD_LINKS);

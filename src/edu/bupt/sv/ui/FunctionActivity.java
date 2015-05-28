@@ -37,10 +37,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class FunctionActivity extends Activity  implements OnMapReadyCallback{
+	private static final int TIME_SHORT = 0;
+	private static final int LENGTH_SHORT = 1;
+	
 	private static final int MSG_ON_LOCATION_CHANGE = 1;
 	private static final int MSG_ON_PATH_CHANGE =2;
 	private static final int MSG_ON_CHARGE_CHANGE =3;
@@ -57,9 +61,10 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
     private Marker carPosition;
     private Marker start;
     private Marker end;
+    private Marker turnCurrentNode;
+    private Marker turnNextNode; 
     private Polyline polyline;
-    
-    
+     
     private TextView  vid;
     private TextView  longitude;
     private TextView  latitude;
@@ -167,11 +172,9 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			}
 		}
 	};
-	
 
-	 
    @Override
-   protected void onCreate(Bundle savedInstanceState) {	 
+    protected void onCreate(Bundle savedInstanceState) {	 
          super.onCreate(savedInstanceState);
          setContentView(R.layout.function_page);
          
@@ -208,10 +211,10 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
                      public boolean onMenuItemClick(MenuItem item) {
                     	 switch(item.getItemId()){  
                     	 case R.id.getcharge :
-                    		 handleChangeDes();
-                    		 break;
-                    	 case R.id.changedes :
                     		 handleGetCharged();
+                    		 break;
+                    	 case R.id.changedes :                		 
+                    		 handleChangeDes();
                     		 break;
                     	 }         
                          return true;
@@ -238,6 +241,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
           @Override
           public boolean onMarkerClick(Marker arg0) {
               // TODO Auto-generated method stub
+        	  //LogUtil.toast(mContext,"haha"+isChangeDes);
               if(isChangeDes == 1){
             	  LogUtil.toast(mContext, "目的地变更为:"+arg0.getPosition().latitude+" "+arg0.getPosition().longitude +"　！");
             	  api.changeDestination(Integer.parseInt(arg0.getSnippet()));         	  
@@ -309,23 +313,37 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			carPosition.remove();
 		LatLng Position = new LatLng(newPoint.latitude, newPoint.longitude);  
 		carPosition= map.addMarker(new MarkerOptions().position(Position)); 
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position, 16));
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position,16));
 	}
 	
 	private void handleOnGetTurnnodeid(Point[] points){
-		System.out.println("turn+node#########"+points[0]);
-		map.addMarker(new MarkerOptions().position(new LatLng(points[0].getLatitude(),points[0].getLongitude()))
+		//System.out.println("turn+node#########"+points[0]);
+		if(turnCurrentNode!=null){
+			turnCurrentNode.remove();
+		}
+		if(turnNextNode!=null){
+			turnNextNode.remove();
+		}
+		turnCurrentNode = map.addMarker(new MarkerOptions().position(new LatLng(points[0].getLatitude(),points[0].getLongitude()))
 	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));
-		map.addMarker(new MarkerOptions().position(new LatLng(points[1].getLatitude(),points[1].getLongitude()))
+		turnNextNode = map.addMarker(new MarkerOptions().position(new LatLng(points[1].getLatitude(),points[1].getLongitude()))
 	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));
 		
 	}
 
-	private void handleChangeDes(){
+	private void handleChangeDes(){		
 		isChangeDes = 1;	
 	}
 	
 	private void handleGetCharged(){
 		api.requestCharge();
+	}
+	
+	private int  returnStrategy(){
+		RadioButton timeShortButton = (RadioButton) this.findViewById(R.id.radioMale);
+		if(timeShortButton.isChecked()){
+			return TIME_SHORT;
+		}else
+			return LENGTH_SHORT;
 	}
 }
