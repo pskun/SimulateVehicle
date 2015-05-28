@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -26,7 +27,9 @@ public class DirectionView extends View implements EntityConstants{
     int innerRadius = 0;
     private float innerCircleRadius = 0;
     private float smallCircle = 10;
-    public Dir dir = Dir.CENTER;
+    public Dir dir = Dir.UNDEFINE;
+    
+    private final static String TAG = "directionview"; 
     
  
 
@@ -62,7 +65,6 @@ public class DirectionView extends View implements EntityConstants{
         center = getWidth() / 2;
         innerRadius = (center - circleWidth / 2 - 10);// 圆环
         innerCircleRadius = center / 3;
-        this.setOnTouchListener(onTouchListener);
     }
 
     /**
@@ -116,7 +118,7 @@ public class DirectionView extends View implements EntityConstants{
 
         initBackGround(canvas);
         drawDirTriangle(canvas, dir);
-
+ 
     }
 
     /**
@@ -128,22 +130,19 @@ public class DirectionView extends View implements EntityConstants{
         paint.setColor(innerCircleColor);
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.FILL);
-
+        System.out.println("log###"+dir);
         switch (dir) {
         case UP:
-            drawUpTriangle(canvas);
-            api.turnNewPath(TURN_STRAIGHT);
+            drawUpTriangle(canvas);         
             break;
         case DOWN:
             drawDownTriangle(canvas);
             break;
         case LEFT:
             drawLeftTriangle(canvas);
-            api.turnNewPath(TURN_LEFT);
             break;
         case RIGHT:
             drawRightTriangle(canvas);
-            api.turnNewPath(TURN_RIGHT);
             break;
         case CENTER:
             invalidate();
@@ -237,18 +236,26 @@ public class DirectionView extends View implements EntityConstants{
         case UP:
             canvas.drawArc(new RectF(center - innerRadius, center - innerRadius, center + innerRadius, center
                     + innerRadius), 225, 90, false, paint);
+            api.turnNewPath(TURN_STRAIGHT);
+            dir = Dir.UNDEFINE;
+            
             break;
         case DOWN:
             canvas.drawArc(new RectF(center - innerRadius, center - innerRadius, center + innerRadius, center
                     + innerRadius), 45, 90, false, paint);
+            
             break;
         case LEFT:
             canvas.drawArc(new RectF(center - innerRadius, center - innerRadius, center + innerRadius, center
                     + innerRadius), 135, 90, false, paint);
+            api.turnNewPath(TURN_LEFT);
+            dir = Dir.UNDEFINE;
             break;
         case RIGHT:
             canvas.drawArc(new RectF(center - innerRadius, center - innerRadius, center + innerRadius, center
                     + innerRadius), -45, 90, false, paint);
+            api.turnNewPath(TURN_RIGHT);
+            dir = Dir.UNDEFINE;
             break;
 
         default:
@@ -289,7 +296,6 @@ public class DirectionView extends View implements EntityConstants{
         clearCanvas(canvas);
         drawBackCircle(canvas);
         drawInnerCircle(canvas);
-
     }
 
     /**
@@ -335,49 +341,45 @@ public class DirectionView extends View implements EntityConstants{
         canvas.drawColor(backgroundColor);
     }
 
-    OnTouchListener onTouchListener = new OnTouchListener() {
+    /**
+     * 检测方向
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    private Dir checkDir(float x, float y) {
+        Dir dir = Dir.UNDEFINE;
 
-        @Override
-        public boolean onTouch(View view, MotionEvent event) {
-            Dir tmp = Dir.UNDEFINE;
-            if ((tmp = checkDir(event.getX(), event.getY())) != Dir.UNDEFINE) {
-                dir = tmp;
-                invalidate();
-            }
-            return true;
+        if (Math.sqrt(Math.pow(y - center, 2) + Math.pow(x - center, 2)) < innerCircleRadius) {// 判断在中心圆圈内
+            dir = Dir.CENTER;
+            Log.v(TAG, "----中央");
+        } else if (y < x && y + x < 2 * center) {
+            dir = Dir.UP;
+            Log.v(TAG, "----向上");
+        } else if (y < x && y + x > 2 * center) {
+            dir = Dir.RIGHT;
+            Log.v(TAG, "----向右");
+        } else if (y > x && y + x < 2 * center) {
+            dir = Dir.LEFT;
+            Log.v(TAG, "----向左");
+        } else if (y > x && y + x > 2 * center) {
+            dir = Dir.DOWN;
+            Log.v(TAG, "----向下");
         }
 
-        /**
-         * 检测方向
-         * 
-         * @param x
-         * @param y
-         * @return
-         */
-        private Dir checkDir(float x, float y) {
-            Dir dir = Dir.UNDEFINE;
-
-            if (Math.sqrt(Math.pow(y - center, 2) + Math.pow(x - center, 2)) < innerCircleRadius) {// 判断在中心圆圈内
-                dir = Dir.CENTER;
-                System.out.println("----中央");
-            } else if (y < x && y + x < 2 * center) {
-                dir = Dir.UP;
-                System.out.println("----向上");
-            } else if (y < x && y + x > 2 * center) {
-                dir = Dir.RIGHT;
-                System.out.println("----向右");
-            } else if (y > x && y + x < 2 * center) {
-                dir = Dir.LEFT;
-                System.out.println("----向左");
-            } else if (y > x && y + x > 2 * center) {
-                dir = Dir.DOWN;
-                System.out.println("----向下");
-            }
-
-            return dir;
+        return dir;
+    }
+    
+    @Override
+	public boolean onTouchEvent(MotionEvent event) {
+    	Dir tmp = Dir.UNDEFINE;
+        if ((tmp = checkDir(event.getX(), event.getY())) != Dir.UNDEFINE) {
+            dir = tmp;
+            invalidate();
         }
-
-    };
+		return super.onTouchEvent(event);
+	}
 
     /**
      * 关于方向的枚举

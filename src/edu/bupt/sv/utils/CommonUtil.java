@@ -30,7 +30,7 @@ public final class CommonUtil {
 		return ret;
 	}
 	
-	public static boolean isLinkNodeIdValie(Integer id) {
+	public static boolean isLinkNodeIdValid(Integer id) {
 		return (id!=null && id.intValue()!=0);
 	}
 }
