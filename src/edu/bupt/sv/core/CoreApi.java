@@ -110,13 +110,13 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 	@Override
 	public SparseArray<Node> getNodeList() {
 		DataConfig dc = DataConfig.getInstance(mContext);
-		return dc.getNodeInfo();
+		return dc.getNodeList();
 	}
 
 	@Override
 	public SparseArray<Node> getChargeStation() {
-		// TODO Auto-generated method stub
-		return null;
+		DataConfig dc = DataConfig.getInstance(mContext);
+		return dc.getStationList();
 	}
 	
 }

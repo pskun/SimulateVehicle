@@ -55,7 +55,7 @@ public class DataConfig {
 		return initVehicleData();
 	}
 	
-	public SparseArray<Node> getNodeInfo() {
+	public SparseArray<Node> getNodeList() {
 		return nodeInfo;
 	}
 
@@ -63,6 +63,10 @@ public class DataConfig {
 		return vehicleList;
 	}
 
+	public SparseArray<Node> getStationList() {
+		return stationInfo;
+	}
+	
 	public Vehicle getVehicleFromConfig(Integer vehicleId) {
 		if(vehicleList == null)
 			return null;
@@ -208,15 +212,19 @@ public class DataConfig {
 		return true;
 	}
 
-	public Integer getNearstStation() {
+	public Integer getNearstStation(double lat, double lng) {
 		int size = stationInfo.size();
 		double minDis = Double.MAX_VALUE;
 		Integer minStationId = 0;
 		for(int i=0; i<size; i++) {
-			Node id = stationInfo.valueAt(0);
-			//double dis = CommonUtil.
+			Node node = stationInfo.valueAt(i);
+			double dis = CommonUtil.getDistance(node.getLatitude(), node.getLongitude(), lat, lng);
+			if(dis<minDis) {
+				minDis = dis;
+				minStationId = Integer.valueOf(stationInfo.keyAt(i));
+			}
 		}
-		return 0;
+		return minStationId;
 	}
 	
 	private boolean initNode() {
