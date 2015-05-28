@@ -201,7 +201,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		LogUtil.verbose("coreThread: start path plan. direction: " + direction);
 		// 获得当前的linkid
 		Integer currentLinkId = vehicle.getLinkID();
-		if(!CommonUtil.isLinkNodeIdValie(currentLinkId)) {
+		if(!CommonUtil.isLinkNodeIdValid(currentLinkId)) {
 			LogUtil.warn("current link id " + currentLinkId + " is invalid.");
 			return;
 		}
@@ -210,9 +210,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		// 获取期望转向的下一个link
 		Integer turnLinkId = dataConfig.getTurnLink(currentLinkId, direction.intValue());
 		// 不能转向或者与路径规划相同
-		if(CommonUtil.isLinkNodeIdValie(nextLinkId)
-				|| CommonUtil.isLinkNodeIdValie(turnLinkId)
-				|| nextLinkId.equals(turnLinkId)) {
+		if(!CommonUtil.isLinkNodeIdValid(nextLinkId)
+				|| !CommonUtil.isLinkNodeIdValid(turnLinkId)
+				|| nextLinkId.intValue() == turnLinkId.intValue()) {
 			coreListener.onPathChanged(false, null, null, null);
 			LogUtil.verbose("turn new path failed.");
 			String hint = CommonUtil.catString("currentLinkId: ", currentLinkId, "nextLink: ", nextLinkId, "turnLinkId: ",turnLinkId);

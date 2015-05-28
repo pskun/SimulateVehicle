@@ -10,9 +10,12 @@ import edu.bupt.sv.utils.LogUtil;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 public class PathPlanTask implements Runnable, MsgConstants {
 
+	private static final String TAG = "PathPlanTask";
+	
 	private static final int LOCAL_MSG_START_PLAN = 1;
 	private static final int LOCAL_MSG_QUIT = 2;
 	
@@ -70,6 +73,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	
 	@Override
 	public void run() {
+		Log.e(TAG, "thread started");
 		Looper.prepare();
 		mLocalHandler = new Handler(Looper.myLooper()) {
 			@Override
@@ -102,12 +106,16 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	private void handleStartPlan() {
 		tmAccessor.setJobHandler(mLocalHandler);
 		// 告知TM临时终点
+		Log.e(TAG, "pathPlanTask handle start plan");
+		Log.e(TAG, "vehicleId: " + vehicleId);
+		Log.e(TAG, "tempDestNodeId: " + tempDestNodeId);
 		tmAccessor.requestChangeDest(vehicleId, tempDestNodeId);
 		// 进行路径规划
 		pfAccessor.planPath(startPoint.latitude, startPoint.longitude, destPoint.latitude, destPoint.longitude);
 	}
 	
 	private void handleOnReceive(int dataType, Object obj) {
+		Log.e(TAG, "on receive data:" + dataType);
 		switch(dataType) {
 		case DATA_TM_DEST_ACK:
 			tempDestChangeACK = true;

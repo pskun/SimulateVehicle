@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class DirectionView extends View implements EntityConstants{
+public class DirectionView extends View implements EntityConstants {
 	
 	private CoreApi api;
 
@@ -386,7 +386,7 @@ public class DirectionView extends View implements EntityConstants{
      * 
      */
     public enum Dir {
-    	CENTER,UP, DOWN, LEFT, RIGHT, UNDEFINE
+    	CENTER, UP, DOWN, LEFT, RIGHT, UNDEFINE
     }
 
 }
