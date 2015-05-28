@@ -7,6 +7,7 @@ import edu.bupt.sv.core.MsgConstants;
 import edu.bupt.sv.entity.PathInfo;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.utils.LogUtil;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -38,14 +39,16 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	
 	private ExecutorService threadPool = Executors.newSingleThreadExecutor();
 	
-	public PathPlanTask(Handler coreHandler, TMAccessor tmAccessor) {
+	public PathPlanTask(Context ctx, Handler coreHandler, TMAccessor tmAccessor) {
 		super();
 		this.coreHandler = coreHandler;
 		this.tmAccessor = tmAccessor;
+		this.pfAccessor = new PlatformAccessor(ctx);
 	}
 
-	public void startTask(Point startPoint, Point destPoint, Integer tempDestNodeId) {
+	public void startTask(Integer vehicleId, Point startPoint, Point destPoint, Integer tempDestNodeId) {
 		// 初始化
+		this.vehicleId = vehicleId;
 		tempDestChangeACK = false;
 		finalDestChangeACK = false;
 		this.tempDestNodeId = tempDestNodeId;
@@ -82,7 +85,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
                 handleLocalMessage(msg);
             }
 		};
-		mLocalHandler.obtainMessage(LOCAL_MSG_START_PLAN);
+		mLocalHandler.obtainMessage(LOCAL_MSG_START_PLAN).sendToTarget();
 		Looper.loop();
 	}
 
@@ -105,6 +108,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	
 	private void handleStartPlan() {
 		tmAccessor.setJobHandler(mLocalHandler);
+		pfAccessor.setJobHandler(mLocalHandler);
 		// 告知TM临时终点
 		Log.e(TAG, "pathPlanTask handle start plan");
 		Log.e(TAG, "vehicleId: " + vehicleId);
@@ -136,8 +140,9 @@ public class PathPlanTask implements Runnable, MsgConstants {
 				mLocalHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
 				return;
 			}
+			Log.e(TAG, "pathplantask receive new path");
 			// 收到新的路径，告知coreThread
-			coreHandler.obtainMessage(MSG_ON_RECEIVE, DATA_PATH_PLAN, -1, pathInfo);
+			coreHandler.obtainMessage(MSG_ON_RECEIVE, DATA_PATH_PLAN, -1, pathInfo).sendToTarget();
 			// 退出
 			mLocalHandler.obtainMessage(LOCAL_MSG_QUIT).sendToTarget();
 		}
@@ -148,7 +153,12 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	}
 	
 	private void handleOnQuit() {
+		if(mLocalHandler!=null) {
+			mLocalHandler.removeCallbacksAndMessages(null);
+		}
 		Looper.myLooper().quit();
+		threadPool.shutdownNow();
+		mLocalHandler = null;
 		LogUtil.verbose("ppTask is now destroyed.");
 	}
 }

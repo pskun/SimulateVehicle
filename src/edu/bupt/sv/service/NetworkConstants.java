@@ -5,7 +5,7 @@ public interface NetworkConstants {
 	public final String TM_HOST = "10.108.121.112";
 	public final int TM_PORT = 8888;
 	
-	public final String IOV_HOST = "http://10.108.120.176";
+	public final String IOV_HOST = "http://10.108.120.176:8080";
 	
 	// TM相关参数
 	// TM响应码

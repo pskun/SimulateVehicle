@@ -145,7 +145,7 @@ public class DirectionView extends View implements EntityConstants {
             drawRightTriangle(canvas);
             break;
         case CENTER:
-            invalidate();
+            //invalidate();
             break;
         default:
             break;

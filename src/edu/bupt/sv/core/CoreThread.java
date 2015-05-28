@@ -132,7 +132,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			dataConfig = DataConfig.getInstance(mContext);
 		}
 		if (ppTask == null) {
-			ppTask = new PathPlanTask(mHandler, tmAccessor);
+			ppTask = new PathPlanTask(mContext, mHandler, tmAccessor);
 		} else {
 			LogUtil.warn("ppTask already exists.");
 		}
@@ -237,7 +237,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		Point endPoint = dataConfig.getLatLngOfNode(endNodeId);
 		// just for debug
 		coreListener.onGetTurnNodeId(dataConfig.getStartPointOfLink(turnLinkId), startPoint);
-		ppTask.startTask(startPoint, endPoint, tempDestNodeId);
+		ppTask.startTask(vehicle.getId(), startPoint, endPoint, tempDestNodeId);
 	}
 	
 	private void handleChangeDest(Integer newDestNodeId) {
@@ -258,7 +258,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		Integer tempDestNodeId = dataConfig.getEndNodeIdOfLink(nextLinkId);
 		Point startPoint = dataConfig.getEndPointOfLink(nextLinkId);
 		Point endPoint = dataConfig.getLatLngOfNode(newDestNodeId);
-		ppTask.startTask(startPoint, endPoint, tempDestNodeId);
+		ppTask.startTask(vehicle.getId(), startPoint, endPoint, tempDestNodeId);
 	}
 	
 	private void onReceiveSubInfoData(SubInfo subInfo) {
@@ -283,7 +283,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			coreListener.onOtherInfoChanged(subInfo.currentCharge, subInfo.speed, subInfo.linkId);
 	}
 	
-	private void onReceivePathInfoData(PathInfo pathInfo) {
+	private void onReceivePathInfoData(PathInfo pathInfo)  {
 		List<Integer> links = pathInfo.links;
 		List<Point> nodes = pathInfo.pathNodes;
 		// TODO 合法性确认，可能还没转呢

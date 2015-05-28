@@ -48,6 +48,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private static final int MSG_ON_GET_TURNNODEID =5;
 	//private static final int MSG_ON_DIRECTION_CHANGE =3;
 	
+	private static int isChangeDes = 0;
 	static final LatLng NKUT = new LatLng(23.979548, 120.696745);
     private GoogleMap map;
     private Context mContext;
@@ -56,6 +57,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
     private Marker carPosition;
     private Marker start;
     private Marker end;
+    private Polyline polyline;
     
     
     private TextView  vid;
@@ -169,7 +171,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 
 	 
    @Override
-    protected void onCreate(Bundle savedInstanceState) {	 
+   protected void onCreate(Bundle savedInstanceState) {	 
          super.onCreate(savedInstanceState);
          setContentView(R.layout.function_page);
          
@@ -206,10 +208,10 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
                      public boolean onMenuItemClick(MenuItem item) {
                     	 switch(item.getItemId()){  
                     	 case R.id.getcharge :
-                    		 
+                    		 handleChangeDes();
                     		 break;
                     	 case R.id.changedes :
-                    		
+                    		 handleGetCharged();
                     		 break;
                     	 }         
                          return true;
@@ -236,7 +238,11 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
           @Override
           public boolean onMarkerClick(Marker arg0) {
               // TODO Auto-generated method stub
-              arg0.hideInfoWindow();
+              if(isChangeDes == 1){
+            	  LogUtil.toast(mContext, "目的地变更为:"+arg0.getPosition().latitude+" "+arg0.getPosition().longitude +"　！");
+            	  api.changeDestination(Integer.parseInt(arg0.getSnippet()));         	  
+              }
+              isChangeDes = 0;       	  
               return true;
           }
       });
@@ -280,11 +286,14 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		if(end !=null){
 			end.remove();
 		}	
+		if(polyline!=null){
+			polyline.remove();
+		}
 		PolylineOptions rectOptions = new PolylineOptions();
 		for(int i=0;i<paths.size();i++){
 			rectOptions.add(new LatLng(paths.get(i).latitude,paths.get(i).longitude));			
 		}
-		Polyline polyline = map.addPolyline(rectOptions);
+		polyline = map.addPolyline(rectOptions);
 		start = map.addMarker(new MarkerOptions().position(new LatLng(paths.get(0).getLatitude(),paths.get(0).getLongitude()))
 	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.start)));
 		end = map.addMarker(new MarkerOptions().position(new LatLng(paths.get(paths.size()-1).getLatitude(),paths.get(paths.size()-1).getLongitude()))
@@ -300,8 +309,6 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			carPosition.remove();
 		LatLng Position = new LatLng(newPoint.latitude, newPoint.longitude);  
 		carPosition= map.addMarker(new MarkerOptions().position(Position)); 
-		// latitude.setText("当前经度： " + newPoint.longitude);
-		// longitude.setText("当前维度：" + newPoint.latitude);
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position, 16));
 	}
 	
@@ -313,5 +320,12 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));
 		
 	}
+
+	private void handleChangeDes(){
+		isChangeDes = 1;	
+	}
 	
+	private void handleGetCharged(){
+		api.requestCharge();
+	}
 }

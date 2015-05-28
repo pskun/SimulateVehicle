@@ -38,14 +38,14 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 			} else if (ID == nextChangeDestSendId) {
 				if(checkResponseCode(NTY.NTY.Code)) {
 					// 发送给jobHandler
-					jobHandler.obtainMessage(MSG_ON_RECEIVE, DATA_TM_DEST_ACK, -1);
+					jobHandler.obtainMessage(MSG_ON_RECEIVE, DATA_TM_DEST_ACK, -1).sendToTarget();
 				} else {
 					// TODO
 					// 处理错误
 				}
 			} else if (ID == nextChangePathSendId) {
 				if(checkResponseCode(NTY.NTY.Code)) {
-					jobHandler.obtainMessage(MSG_ON_RECEIVE, DATA_TM_PATH_ACK, -1);
+					jobHandler.obtainMessage(MSG_ON_RECEIVE, DATA_TM_PATH_ACK, -1).sendToTarget();
 				} else {
 					// TODO
 					// 处理错误

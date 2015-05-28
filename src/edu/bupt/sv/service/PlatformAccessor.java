@@ -33,6 +33,16 @@ public class PlatformAccessor implements NetworkConstants, MsgConstants {
 
 	private AsyncHttpClient client;
 	
+	public PlatformAccessor(Context context) {
+		super();
+		this.context = context;
+		this.client = new AsyncHttpClient();
+	}
+
+	public void setJobHandler(Handler handler) {
+		this.targetHandler = handler;
+	}
+	
 	private boolean checkResponseStatus(JSONObject response) {
 		try {
 			String status = response.getString(FIELD_STATUS);
