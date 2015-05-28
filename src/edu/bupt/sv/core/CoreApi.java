@@ -80,8 +80,9 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 
 	@Override
 	public void requestCharge() {
-		// TODO Auto-generated method stub
-		
+		if(!isThreadValid())
+			return;
+		coreThread.sendMessage(MSG_REQUEST_CHARGE);
 	}
 
 	@Override
@@ -110,6 +111,12 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 	public SparseArray<Node> getNodeList() {
 		DataConfig dc = DataConfig.getInstance(mContext);
 		return dc.getNodeInfo();
+	}
+
+	@Override
+	public SparseArray<Node> getChargeStation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
