@@ -31,6 +31,8 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	private DataConfig dataConfig;
 	
 	private Vehicle vehicle;
+	// 临时的对象，保存转向和改变终点时的临时link
+	private Integer tempLinkId;
 	
 	// 任务对象
 	private PathPlanTask ppTask;
@@ -218,13 +220,16 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		if(!CommonUtil.isLinkNodeIdValid(nextLinkId)
 				|| !CommonUtil.isLinkNodeIdValid(turnLinkId)
 				|| nextLinkId.intValue() == turnLinkId.intValue()) {
+			double currentLength = dataConfig.getLinkLength(currentLinkId);
+			double nextLength = dataConfig.getLinkLength(nextLinkId);
+			double turnLength = dataConfig.getLinkLength(turnLinkId);
+			// 转向体验的优化
+			// 如果规划路径的下一个link长度很小(小于50m？)，说明是路口之间的连接的短id
+			// TODO
 			coreListener.onPathChanged(false, null, null, null);
 			LogUtil.verbose("turn new path failed.");
 			String hint = CommonUtil.catString("currentLinkId: ", currentLinkId, " nextLink: ", nextLinkId, " turnLinkId: ",turnLinkId);
 			LogUtil.verbose(hint);
-			double currentLength = dataConfig.getLinkLength(currentLinkId);
-			double nextLength = dataConfig.getLinkLength(nextLinkId);
-			double turnLength = dataConfig.getLinkLength(turnLinkId);
 			Log.e("Link Length", "current length: " + currentLength);
 			Log.e("Link Length", "next length: " + nextLength);
 			Log.e("Link Length", "turn length: " + turnLength);
@@ -235,12 +240,14 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		Point startPoint = dataConfig.getEndPointOfLink(turnLinkId);
 		Integer endNodeId = vehicle.getEndPos();
 		Point endPoint = dataConfig.getLatLngOfNode(endNodeId);
+		tempLinkId = turnLinkId;
 		// just for debug
 		coreListener.onGetTurnNodeId(dataConfig.getStartPointOfLink(turnLinkId), startPoint);
 		ppTask.startTask(startPoint, endPoint, tempDestNodeId);
 	}
 	
 	private void handleChangeDest(Integer newDestNodeId) {
+		LogUtil.verbose("coreThread: start change destination. newDestNodeId: " + newDestNodeId);
 		// 获得当前的linkid
 		Integer currentLinkId = vehicle.getLinkID();
 		// 获得规划的路径的下一个link
@@ -248,7 +255,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		// 获得规划的路径的终点
 		Integer destNodeId = vehicle.getEndPos();
 		// 终点相同
-		if(nextLinkId==null || destNodeId==null || destNodeId.equals(newDestNodeId)) {
+		if(nextLinkId==null || destNodeId==null || destNodeId.intValue()==newDestNodeId.intValue()) {
 			coreListener.onPathChanged(false, null, null, null);
 			LogUtil.verbose("change destination failed.");
 			String hint = CommonUtil.catString("destNodeId: ", destNodeId, "newDestNode: ", newDestNodeId);
@@ -268,7 +275,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		// Log.d("DEBUG", "longitude: " + subInfo.longitude);
 		// Log.d("DEBUG", "charge: " + subInfo.currentCharge);
 		// Log.d("DEBUG", "speed: " + subInfo.speed);
-		Log.d("DEBUG", "link id: " + subInfo.linkId);
+		// Log.d("DEBUG", "link id: " + subInfo.linkId);
 		// 当前linkid
 		setCurrentLink(subInfo.linkId);
 		// 当前位置
@@ -286,7 +293,22 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	private void onReceivePathInfoData(PathInfo pathInfo) {
 		List<Integer> links = pathInfo.links;
 		List<Point> nodes = pathInfo.pathNodes;
-		// TODO 合法性确认，可能还没转呢
+		// 合理性确认，可能还没转，需要加上当前点到新规划的起始点的link
+		// 便于地图展示
+		if(tempLinkId != 0) {
+			Integer currentLinkId = vehicle.getLinkID();
+			if(currentLinkId.intValue() == tempLinkId.intValue()) {
+				links.add(0, currentLinkId);
+				nodes.add(0, new Point(vehicle.getLatitude(), vehicle.getLongitude()));
+			}
+			else
+			{
+				links.add(0, tempLinkId);
+				links.add(0, currentLinkId);
+				nodes.add(0, dataConfig.getEndPointOfLink(currentLinkId));
+				nodes.add(0, new Point(vehicle.getLatitude(), vehicle.getLongitude()));
+			}
+		}
 		vehicle.setPath(links);
 		vehicle.setStartPos(dataConfig.getStartNodeIdOfLink(links.get(0)));
 		vehicle.setEndPos(dataConfig.getEndNodeIdOfLink(links.get(links.size()-1)));
@@ -323,6 +345,10 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	/**
 	 * 以下是关于车辆信息的函数
 	 */
+	/**
+	 * vehicle 是否存在
+	 * @return
+	 */
 	private boolean isExistVehicle() {
 		if(vehicle == null) {
 			LogUtil.error("entity vehicle is null.");
@@ -331,6 +357,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		}
 		return true;
 	}
+	
 	/**
 	 * 设置位置，如果位置有更新则返回true，否则返回false
 	 * @param latitude
@@ -369,6 +396,8 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	 */
 	private boolean setCurrentLink(int linkid) {
 		if(!isExistVehicle())
+			return false;
+		if(vehicle.getLinkID().intValue() == 0)
 			return false;
 		if(vehicle.getLinkID().intValue() != linkid) {
 			vehicle.setLinkID(Integer.valueOf(linkid));

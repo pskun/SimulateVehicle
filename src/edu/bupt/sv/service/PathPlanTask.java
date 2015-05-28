@@ -45,6 +45,9 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	}
 
 	public void startTask(Point startPoint, Point destPoint, Integer tempDestNodeId) {
+		if(!threadPool.isShutdown()) {
+			handleOnQuit();
+		}
 		// ≥ı ºªØ
 		tempDestChangeACK = false;
 		finalDestChangeACK = false;

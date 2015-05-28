@@ -183,6 +183,8 @@ public class DataConfig {
 				Integer aNode = Integer.parseInt(split[2]);
 				Integer bNode = Integer.parseInt(split[3]);
 				Double length = Double.parseDouble(split[4]);
+				// 英里转换成米
+				length = Double.valueOf(CommonUtil.milesToMeter(length.doubleValue()));
 				Link link = new Link(id, aNode, bNode, length);
 				linkInfo.append(link.getId(), link);
 				if (!CommonUtil.isStringNull(dir)) {

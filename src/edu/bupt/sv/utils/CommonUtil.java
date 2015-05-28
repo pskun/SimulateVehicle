@@ -30,7 +30,18 @@ public final class CommonUtil {
 		return ret;
 	}
 	
+	/**
+	 * 判断一个linkId是否合法
+	 * @param id
+	 * @return
+	 */
 	public static boolean isLinkNodeIdValid(Integer id) {
 		return (id!=null && id.intValue()!=0);
+	}
+	
+	public static double milesToMeter(double mile) {
+		if(mile<=0)
+			return 0.0;
+		return mile * 1.60931 * 1000;
 	}
 }
