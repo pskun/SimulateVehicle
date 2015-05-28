@@ -13,8 +13,9 @@
       <TextView 
         android:id="@+id/vehicleid"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="wrap_content" 
         android:text="车辆ID：1"
+        android:textSize="20sp"
         android:layout_weight="1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -25,6 +26,7 @@
            android:layout_height="wrap_content"
            android:layout_weight="1"
            android:text="当前电量：0"
+           android:textSize="20sp"
         />
          <TextView 
            android:id="@+id/route"
@@ -32,6 +34,7 @@
            android:layout_height="wrap_content"
            android:layout_weight="1"
            android:text="当前路段：0"
+           android:textSize="20sp"
          />
       </LinearLayout>
       
@@ -46,6 +49,7 @@
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:text="经度：0"  
+           android:textSize="20sp"
            android:layout_weight="1"
            android:layout_alignParentLeft="true"
            android:layout_alignParentTop="true"
@@ -56,6 +60,7 @@
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:text="纬度：0"
+           android:textSize="20sp"
            android:layout_weight="1"
         />
        <TextView 
@@ -63,6 +68,7 @@
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:text="当前速度：0"
+           android:textSize="20sp"
            android:layout_weight="1"
            />
       </LinearLayout>
@@ -103,6 +109,7 @@
          android:layout_height="match_parent"
          android:checked="true"
          android:text="时间最短"
+         android:textSize="20sp"
           >
       </RadioButton>    
 
@@ -110,7 +117,8 @@
           android:id="@+id/radioFemale"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
-          android:text="路径最短"        
+          android:text="路径最短"   
+          android:textSize="20sp"     
            >
 
         </RadioButton> 
