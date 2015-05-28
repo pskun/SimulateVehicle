@@ -266,7 +266,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		if(nextLinkId==null) {
 			// 判断离终点还有多远
 			Point endPoint = dataConfig.getEndPointOfLink(currentLinkId);
-			double dis = CommonUtil.GetDistance(vehicle.getLatitude(), vehicle.getLongitude(), endPoint.latitude, endPoint.longitude);
+			double dis = CommonUtil.getDistance(vehicle.getLatitude(), vehicle.getLongitude(), endPoint.latitude, endPoint.longitude);
 			if(dis>=50) {
 				// 如果大于50m,还有时间与tm通信
 				nextLinkId = currentLinkId;
@@ -292,7 +292,10 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	}
 	
 	private void handleRequestCharge() {
-		
+		double currentLat = vehicle.getLatitude();
+		double currentLng = vehicle.getLongitude();
+		Integer nearestNodeId = dataConfig.getNearstStation(currentLat, currentLng);
+		handleChangeDest(nearestNodeId);
 	}
 	
 	private void onReceiveSubInfoData(SubInfo subInfo) {
