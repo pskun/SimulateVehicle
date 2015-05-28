@@ -112,6 +112,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		case MSG_CHANGE_DEST:
 			handleChangeDest((Integer) msg.obj);
 			break;
+		case MSG_REQUEST_CHARGE:
+			handleRequestCharge();
+			break;
 		case MSG_ON_RECEIVE:
 			handleReceiveData(msg.arg1, msg.obj);
 			break;
@@ -216,22 +219,26 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		Integer nextLinkId = vehicle.getNextLinkOfPath(currentLinkId);
 		// 获取期望转向的下一个link
 		Integer turnLinkId = dataConfig.getTurnLink(currentLinkId, direction.intValue());
+		// 转向体验的优化
+		if(!CommonUtil.isLinkNodeIdValid(turnLinkId)) {
+			// 如果规划路径的下一个link长度很小(小于50m？)，说明是路口之间的连接的短id
+			// 那么再判断一下nextLink是否可以转向
+			if(CommonUtil.isLinkNodeIdValid(nextLinkId)) {
+				double nextLength = dataConfig.getLinkLength(nextLinkId);
+				if(nextLength<=50) {
+					turnLinkId = dataConfig.getTurnLink(nextLinkId, direction.intValue());
+				}
+			}
+		}
 		// 不能转向或者与路径规划相同
 		if(!CommonUtil.isLinkNodeIdValid(nextLinkId)
 				|| !CommonUtil.isLinkNodeIdValid(turnLinkId)
-				|| nextLinkId.intValue() == turnLinkId.intValue()) {
-			double currentLength = dataConfig.getLinkLength(currentLinkId);
-			double nextLength = dataConfig.getLinkLength(nextLinkId);
+				|| nextLinkId.intValue() == turnLinkId.intValue()) {	
 			double turnLength = dataConfig.getLinkLength(turnLinkId);
-			// 转向体验的优化
-			// 如果规划路径的下一个link长度很小(小于50m？)，说明是路口之间的连接的短id
-			// TODO
 			coreListener.onPathChanged(false, null, null, null);
 			LogUtil.verbose("turn new path failed.");
 			String hint = CommonUtil.catString("currentLinkId: ", currentLinkId, " nextLink: ", nextLinkId, " turnLinkId: ",turnLinkId);
 			LogUtil.verbose(hint);
-			Log.e("Link Length", "current length: " + currentLength);
-			Log.e("Link Length", "next length: " + nextLength);
 			Log.e("Link Length", "turn length: " + turnLength);
 			return;
 		}
@@ -266,6 +273,10 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		Point startPoint = dataConfig.getEndPointOfLink(nextLinkId);
 		Point endPoint = dataConfig.getLatLngOfNode(newDestNodeId);
 		ppTask.startTask(startPoint, endPoint, tempDestNodeId);
+	}
+	
+	private void handleRequestCharge() {
+		
 	}
 	
 	private void onReceiveSubInfoData(SubInfo subInfo) {

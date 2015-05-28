@@ -21,6 +21,7 @@ public class DataConfig {
 	private static final String NODE_INFO_FILE = "nodeinfo.txt";
 	private static final String LINK_RELATION_FILE = "linkrelation.txt";
 	private static final String VEHICLE_INFO_FILE = "TMConfig.txt";
+	private static final String STATION_INFO_FILE = "stationinfo.txt";
 
 	private Context mContext;
 
@@ -28,6 +29,7 @@ public class DataConfig {
 	private SparseArray<Node> nodeInfo = new SparseArray<Node>();
 	private SparseArray<LinkRelation> linkRelations = new SparseArray<LinkRelation>();
 	private SparseArray<Vehicle> vehicleList = new SparseArray<Vehicle>();
+	private SparseArray<Node> stationInfo = new SparseArray<Node>();
 
 	private DataConfig(Context mContext) {
 		super();
@@ -50,7 +52,6 @@ public class DataConfig {
 		if(!initMapData())
 			return false;
 		LogUtil.verbose("begin to init vehicle data");
-
 		return initVehicleData();
 	}
 	
@@ -157,6 +158,11 @@ public class DataConfig {
 		return points;
 	}
 	
+	/**
+	 * 获得link的长度
+	 * @param linkId
+	 * @return
+	 */
 	public double getLinkLength(Integer linkId) {
 		if(linkId==null){
 			return 0;
@@ -169,6 +175,7 @@ public class DataConfig {
 		try {
 			if(!initNode()) return false;
 			if(!initRelation()) return false;
+			if(!initChargeStation()) return false;
 			
 			InputStreamReader in = new InputStreamReader(mContext
 					.getResources().getAssets().open(LINK_INFO_FILE));
@@ -201,6 +208,17 @@ public class DataConfig {
 		return true;
 	}
 
+	public Integer getNearstStation() {
+		int size = stationInfo.size();
+		double minDis = Double.MAX_VALUE;
+		Integer minStationId = 0;
+		for(int i=0; i<size; i++) {
+			Node id = stationInfo.valueAt(0);
+			//double dis = CommonUtil.
+		}
+		return 0;
+	}
+	
 	private boolean initNode() {
 		InputStreamReader in;
 		try {
@@ -227,6 +245,26 @@ public class DataConfig {
 		return true;
 	}
 
+	private boolean initChargeStation() {
+		InputStreamReader in;
+		try {
+			in = new InputStreamReader(mContext.getResources().getAssets()
+					.open(STATION_INFO_FILE));
+			BufferedReader bufReader = new BufferedReader(in);
+			String line = null;
+			while ((line = bufReader.readLine()) != null) {
+				String[] split = line.split("\t");
+				int nodeId = Integer.parseInt(split[0]);
+				Node stationNode = nodeInfo.get(nodeId);
+				stationInfo.append(nodeId, stationNode);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
 	private boolean initRelation() {
 		InputStreamReader in;
 		try {

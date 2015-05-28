@@ -51,7 +51,7 @@ public interface CoreInterface {
 	public void destroyApi();
 	
 	/**
-	 * 不是异步的方法，获得vehicle的列表
+	 * 非异步方法，获得vehicle的列表
 	 * @return
 	 */
 	public SparseArray<Vehicle> getVehicleList();
@@ -61,4 +61,10 @@ public interface CoreInterface {
 	 * @return
 	 */
 	public SparseArray<Node> getNodeList();
+	
+	/**
+	 * 非异步方法，获得充电站的列表
+	 * @return
+	 */
+	public SparseArray<Node> getChargeStation();
 }
