@@ -208,7 +208,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		if(coreHandler != null) {
 			try {
 				coreHandler.obtainMessage(MSG_ON_RECEIVE, DATA_VEHICLE_INFO, -1, info).sendToTarget();
-			} catch(RuntimeException e) {
+			} catch(Exception e) {
 				destroy();
 			}
 		}
