@@ -236,6 +236,14 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
     	    		  .title("NODE").snippet(String.valueOf(node.getId()))
     	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.node)));
       }  
+      
+      SparseArray<Node> chargeStationInfo = api.getChargeStation();
+      for(int i=0;i<chargeStationInfo.size();i++){ 	 
+    	  Node node = chargeStationInfo.valueAt(i);
+    	  map.addMarker(new MarkerOptions().position(new LatLng(node.getLatitude(),node.getLongitude()))
+    	    		  .title("STATION").snippet(String.valueOf(node.getId()))
+    	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.charge)));
+      }  
      
       map.setOnMarkerClickListener(new OnMarkerClickListener() {
           @Override
