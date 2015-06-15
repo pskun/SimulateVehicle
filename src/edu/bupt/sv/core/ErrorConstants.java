@@ -11,4 +11,6 @@ public interface ErrorConstants {
 	public static final int ERROR_INIT_VEHICLE = 4;
 	
 	public static final int ERROR_NULL_POINTER = 5;
+	
+	public static final int ERROR_ON_CHARGING = 6;
 }

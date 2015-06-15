@@ -39,4 +39,17 @@ public interface MsgConstants {
 	public static final int DATA_TM_PATH_ACK = 4;
 	// TM终点改变确认消息标识
 	public static final int DATA_TM_DEST_ACK = 5;
+	
+	//车辆运行状态-充电
+	public static final int VEHICLE_CHARGE =0;
+	//车辆运行状态-行驶
+	public static final int VEHICLE_RUN =1;
+	//车辆运行状态-等待充电
+	public static final int VEHICLE_WAIT_CHARGE =2;
+	//车辆运行状态-等待红灯
+	public static final int VEHICLE_WAIT_TRAFFIC =3;
+	//车辆运行状态-到达终点
+	public static final int VEHICLE_TERMINAL =-2;
+	//车辆运行状态-未知状态
+	public static final int VEHICLE_UNKNOWN =404;
 }

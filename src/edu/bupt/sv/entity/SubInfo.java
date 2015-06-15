@@ -1,6 +1,7 @@
 package edu.bupt.sv.entity;
 
 public class SubInfo {
+	public Integer status;
 
 	public double latitude;
 	

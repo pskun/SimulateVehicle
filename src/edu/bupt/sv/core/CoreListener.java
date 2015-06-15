@@ -10,6 +10,10 @@ import edu.bupt.sv.entity.Vehicle;
 
 public interface CoreListener {
 	
+	/**
+	 * @deprecated
+	 * @param vehicleIds
+	 */
 	void onRecvVehicleList(List<Integer> vehicleIds);
 	
 	/**
@@ -22,7 +26,7 @@ public interface CoreListener {
 	 * 车辆其他变化时的回调
 	 * @param charge
 	 */
-	void onOtherInfoChanged(double charge, double speed, Integer linkId);
+	void onOtherInfoChanged(double charge, double speed, Integer linkID ,Integer status);
 	
 	/**
 	 * 重新规划路径后的回调

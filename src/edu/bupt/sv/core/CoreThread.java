@@ -4,6 +4,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.PathInfo;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.SubInfo;
@@ -19,6 +20,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.util.SparseArray;
 
 public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 
@@ -119,6 +121,8 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		case MSG_ON_RECEIVE:
 			handleReceiveData(msg.arg1, msg.obj);
 			break;
+		case MSG_ON_ERROR:
+			break;
 		case MSG_ON_QUIT:
 			handleOnQuit();
 			break;
@@ -183,7 +187,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		// 此时当前linkid为0,手动设置
 		vehicle.setLinkID(vehicle.getPath().get(0));
 		if(coreListener!=null) {
-			coreListener.onOtherInfoChanged(vehicle.getCharge(), vehicle.getSpeed().doubleValue(), vehicle.getLinkID());
+			coreListener.onOtherInfoChanged(vehicle.getCharge(), vehicle.getSpeed().doubleValue(), vehicle.getLinkID(),vehicle.getStatus());
 		}
 		// 给出车的初始化信息
 		List<Integer> pathLinks = vehicle.getPath();
@@ -209,6 +213,8 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	 * @param direction
 	 */
 	private void handlePathPlan(Integer direction) {
+		// 正在充电时不能改变路径，TM会报bug
+		if(isNowCharging()) return;
 		LogUtil.verbose("coreThread: start path plan. direction: " + direction);
 		// 获得当前的linkid
 		Integer currentLinkId = vehicle.getLinkID();
@@ -255,6 +261,7 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 	}
 	
 	private void handleChangeDest(Integer newDestNodeId) {
+		if(isNowCharging()) return;
 		LogUtil.verbose("coreThread: start change destination. newDestNodeId: " + newDestNodeId);
 		// 获得当前的linkid
 		Integer currentLinkId = vehicle.getLinkID();
@@ -316,8 +323,12 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		setCharge(subInfo.currentCharge);
 		// 当前速度
 		setSpeed(subInfo.speed);
-		if(coreListener != null)
-			coreListener.onOtherInfoChanged(subInfo.currentCharge, subInfo.speed, subInfo.linkId);
+		
+		//当前状态
+		setStatus(subInfo.status);
+		if(coreListener != null) {
+			coreListener.onOtherInfoChanged(subInfo.currentCharge, subInfo.speed, subInfo.linkId,subInfo.status);
+		}
 	}
 	
 	private void onReceivePathInfoData(PathInfo pathInfo)  {
@@ -446,6 +457,25 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 			return false;
 		if(vehicle.getSpeed().doubleValue() != speed) {
 			vehicle.setSpeed(Double.valueOf(speed));
+			return true;
+		}
+		return false;
+	}
+	
+	//设置当前车辆状态
+	private boolean setStatus(Integer status){	
+		if(!isExistVehicle())
+			return false;
+		if(vehicle.getStatus() != status) {
+			vehicle.setStatus(status);
+			return true;
+		}
+		return false;	
+	}
+	
+	private boolean isNowCharging() {
+		if(vehicle.isNowCharging()) {
+			coreListener.onError(ERROR_ON_CHARGING);
 			return true;
 		}
 		return false;

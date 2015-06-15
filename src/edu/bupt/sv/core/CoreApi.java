@@ -77,9 +77,13 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 		return true;
 		
 	}
+	
+	public int getCurrentState(){
+		return 0;
+	}
 
 	@Override
-	public void requestCharge() {
+ 	public void requestCharge() {
 		if(!isThreadValid())
 			return;
 		coreThread.sendMessage(MSG_REQUEST_CHARGE);

@@ -28,7 +28,8 @@ public class Vehicle {
 	// 纬度
 	private double latitude;
 	
-	
+	// 是否正在充电
+	private boolean isNowCharging = false;
 
 	public Vehicle(Integer id, Integer startPos, Integer endPos,
 			Integer linkID, Integer status, Integer model, Double energyCost,
@@ -47,6 +48,7 @@ public class Vehicle {
 		this.reservedEnergy = reservedEnergy;
 		this.speed = speed;
 		this.path = path;
+		this.isNowCharging = false;
 	}
 	
 	public Vehicle(){};
@@ -106,6 +108,11 @@ public class Vehicle {
 		return charge;
 	}
 	public void setCharge(Double charge) {
+		// 判断是否在充电
+		if(charge.doubleValue()>this.charge && this.speed==0)
+			isNowCharging = true;
+		else
+			isNowCharging = false;
 		this.charge = charge;
 	}
 	public Double getReservedEnergy() {
@@ -139,6 +146,10 @@ public class Vehicle {
 		this.latitude = latitude;
 	}
 	
+	public boolean isNowCharging() {
+		return isNowCharging;
+	}
+
 	/**
 	 * 获得已规划的路径中下一个linkid
 	 * @param currentLinkId

@@ -63,10 +63,6 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	}
 	
 	public void destroy() {
-		if(null != tmAccessor) {
-			tmAccessor.destroy();
-			tmAccessor = null;
-		}
 		if(null != pfAccessor) {
 			pfAccessor.destroy();
 			pfAccessor = null;
@@ -152,7 +148,9 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	}
 	
 	private void handleOnError() {
-		// TODO
+		coreHandler.obtainMessage(MSG_ON_ERROR).sendToTarget();
+		// ÍË³ö
+		this.destroy();
 	}
 	
 	private void handleOnQuit() {

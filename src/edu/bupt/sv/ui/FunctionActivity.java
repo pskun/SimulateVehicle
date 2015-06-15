@@ -18,9 +18,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import edu.bupt.sv.core.ApiFactory;
 import edu.bupt.sv.core.CoreApi;
 import edu.bupt.sv.core.CoreListener;
+import edu.bupt.sv.core.ErrorConstants;
 import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
-import edu.bupt.sv.entity.Vehicle;
 import edu.bupt.sv.utils.LogUtil;
 
 import android.app.Activity;
@@ -31,17 +31,18 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ToggleButton;
 
-public class FunctionActivity extends Activity  implements OnMapReadyCallback{
+public class FunctionActivity extends Activity implements OnMapReadyCallback, ErrorConstants {
 	private static final int TIME_SHORT = 0;
 	private static final int LENGTH_SHORT = 1;
 	
@@ -50,9 +51,11 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private static final int MSG_ON_CHARGE_CHANGE =3;
 	private static final int MSG_ON_OTHERINFO_CHANGE =4;
 	private static final int MSG_ON_GET_TURNNODEID =5;
-	//private static final int MSG_ON_DIRECTION_CHANGE =3;
+	
 	
 	private static int isChangeDes = 0;
+	private static int isFollow = 1;
+	private static int isService = 1;
 	static final LatLng NKUT = new LatLng(23.979548, 120.696745);
     private GoogleMap map;
     private Context mContext;
@@ -68,9 +71,10 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
     private TextView  vid;
     private TextView  longitude;
     private TextView  latitude;
-    private TextView  route;
+    private TextView  status;
     private TextView  battery ;
-    private TextView  speed ;
+    private TextView  speed ;   
+    private Button changedestip;
     
      
     PopupMenu popup = null;
@@ -104,6 +108,9 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		
 		@Override
 		public void onRecvVehicleList(List<Integer> vehicleIds) {
+			/**
+			 * @deprecated
+			 */
 			int size = vehicleIds.size();
 			for(int i=0; i<size; i++) {
 				System.out.println("Vehicle id: " + vehicleIds.get(i));
@@ -117,30 +124,33 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 
 		@Override
 		public void onError(int errorCode) {
-			// TODO Auto-generated method stub
+			switch (errorCode) {
+			case ERROR_ON_CHARGING:
+				LogUtil.toast(FunctionActivity.this, "当前状态不能改变路径或终点！");
+				break; 
+			default:
+				break;
+			}
 			
 		}
 		
 		@Override
 		public void onPathChanged(boolean success, List<Point> paths,
-				Point start, Point end) {
-			// TODO Auto-generated method stub		
+				Point start, Point end) {	
 			if(success==true){
-			uiHandler.obtainMessage(MSG_ON_PATH_CHANGE,paths).sendToTarget();
-			uiHandler.obtainMessage(MSG_ON_LOCATION_CHANGE,start).sendToTarget();
-			}else{
-			LogUtil.toast(mContext, "不能向该方向转弯！");}
+				uiHandler.obtainMessage(MSG_ON_PATH_CHANGE,paths).sendToTarget();
+				uiHandler.obtainMessage(MSG_ON_LOCATION_CHANGE,start).sendToTarget();
+			} else {
+				LogUtil.toast(mContext, "不能向该方向转弯或改变终点！");
+			}
 		}
 
 		@Override
-		public void onOtherInfoChanged(double charge, double speed,
-				Integer linkId) {
-			// TODO Auto-generated method stub
-			
-			Double linkid = Double.parseDouble(linkId.toString());
-			Double[] info =new Double[]{charge,speed,linkid};
-			uiHandler.obtainMessage(MSG_ON_OTHERINFO_CHANGE,info).sendToTarget();
-					
+		public void onOtherInfoChanged(double charge, double speed,Integer linkId,
+				Integer status) {
+			Double stat = Double.parseDouble(status.toString());
+			Double[] info =new Double[]{charge,speed,stat};
+			uiHandler.obtainMessage(MSG_ON_OTHERINFO_CHANGE, info).sendToTarget();					
 		}
 
 		@Override
@@ -149,28 +159,6 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 			uiHandler.obtainMessage(MSG_ON_GET_TURNNODEID,info).sendToTarget();
 			 
 		}	
-	};
-	
-    private OnClickListener listener = new OnClickListener(){
-		@Override
-		public void onClick(View v) {
-			int clickId = v.getId();
-			switch(clickId)
-			{
-			case R.id.getcharge:
-				//getService();
-				break;
-			case R.id.vehicle_list_btn:
-				//requestVehicleList();
-				break;
-			case R.id.quit_btn:
-				//quit();
-				break;
-			case R.id.sub_vehicle_btn:
-				//subVehicleInfo(10);
-				break;
-			}
-		}
 	};
 
    @Override
@@ -185,18 +173,28 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
          latitude = (TextView) this.findViewById(R.id.latitude);
          longitude = (TextView) this.findViewById(R.id.longitude);
          
-         Log.e("latitude", latitude.toString());
-         
-         route = (TextView) this.findViewById(R.id.route);
+         status = (TextView) this.findViewById(R.id.status);
          battery = (TextView)this.findViewById(R.id.battery);
          speed = (TextView)this.findViewById(R.id.speed);
+         
+         
          
          vid.setText("车辆ID："+vehicleid);
          init();
          directionView.init(api);
          
          ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
-        
+         changedestip = (Button)this.findViewById(R.id.changedestip);
+         
+         changedestip.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				changedestip.setVisibility(View.INVISIBLE);
+				isChangeDes = 0;				
+			}
+		});
         
    	     final  Button moreMenu = (Button)this.findViewById(R.id.buttonservice);
          moreMenu.setOnClickListener(new OnClickListener() {   
@@ -222,7 +220,19 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
                  });
                  popup.show(); //showing popup menu 
                      }
-               });                  
+               }); 
+         
+         ToggleButton followButton=(ToggleButton)findViewById(R.id.followButton);
+         followButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {    
+             @Override
+             public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+                 if(arg1){
+                    isFollow=1;
+                 }else{
+                	isFollow=0;
+                 }                
+             }
+         });    
     }
 
 	@Override
@@ -251,19 +261,20 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
               // TODO Auto-generated method stub
         	  //LogUtil.toast(mContext,"haha"+isChangeDes);
               if(isChangeDes == 1){
-            	  LogUtil.toast(mContext, "目的地变更为:"+arg0.getPosition().latitude+" "+arg0.getPosition().longitude +"　！");
+            	  LogUtil.toast(mContext, "目的地变更为:"+arg0.getPosition().latitude+" "+arg0.getPosition().longitude +"！");
             	  api.changeDestination(Integer.parseInt(arg0.getSnippet()));         	  
               }
+              changedestip.setVisibility(View.INVISIBLE);
               isChangeDes = 0;       	  
               return true;
           }
       });
       
       LatLng NKUT = new LatLng(29.542324,-98.576859);      
-      map.moveCamera(CameraUpdateFactory.newLatLngZoom(NKUT, 16));
+      map.moveCamera(CameraUpdateFactory.newLatLngZoom(NKUT, 16));  
       api.initVehicle(vehicleid);
       
-	}
+	} 
 	
 	private void handleLocalMessage(Message msg) {
 		switch(msg.what) {
@@ -283,12 +294,40 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	}
 	
 	private void handleOnOtherinfoChanged(Object obj) {
-		// TODO Auto-generated method stub
-		Double[] info = (Double[]) obj;
-		battery.setText("剩余电量 :"+info[0]);
-		speed.setText("当前速度 ："+info[1]);	
+		Double[] info = (Double[]) obj;	
 		int temp = info[2].intValue();
-		route.setText("当前路段 ："+ temp);
+		if(temp==404){
+			status.setText("当前状态：未知状态");
+			isService = 0;
+		}
+		else if(temp==0)
+		{
+			status.setText("当前状态：充电站充电");
+			isService = 0;
+		}
+		else if(temp==1 && info[1].doubleValue()!=0)
+		{
+			status.setText("当前状态：正在行驶");
+			isService = 1;
+		}
+		else if(temp == -1)
+		{
+			status.setText("当前状态：等待充电");
+			isService = 1;
+		}
+		else if(temp == 1 && info[1].doubleValue()==0)
+		{
+			status.setText("当前状态：等待红灯");
+			isService = 1;
+		}
+		else if(temp == -2)
+		{
+			status.setText("当前状态：到达终点");
+			isService = 0;
+		}
+		
+		battery.setText("当前电量：" + reserveDecimal(info[0].doubleValue()) +" kwh");
+		speed.setText("当前速度：" + reserveDecimal(info[1].doubleValue()) + " mile/h");	
 	}
 
 	private void handleOnPathChanged(List<Point> paths){
@@ -314,19 +353,20 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	}
 	
 	private void handleOnLocationChanged(Point newPoint){
-		latitude.setText("当前经度： " + newPoint.longitude);
-		longitude.setText("当前纬度：" + newPoint.latitude);
+		
+		longitude.setText("当前经度： " + newPoint.longitude);
+		latitude.setText("当前纬度：" + newPoint.latitude);
 		LogUtil.error("onLocationChange:" + newPoint.latitude + " " + newPoint.longitude);
 		if(carPosition!=null)
 			carPosition.remove();
 		LatLng Position = new LatLng(newPoint.latitude, newPoint.longitude);  
 		carPosition= map.addMarker(new MarkerOptions().position(Position)); 
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position,16));
+		if(isFollow==1)		
+		    map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position,16));
 	}
 	
 	private void handleOnGetTurnnodeid(Point[] points){
-		//System.out.println("turn+node#########"+points[0]);
-		if(turnCurrentNode!=null){
+		/*if(turnCurrentNode!=null){
 			turnCurrentNode.remove();
 		}
 		if(turnNextNode!=null){
@@ -335,16 +375,24 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		turnCurrentNode = map.addMarker(new MarkerOptions().position(new LatLng(points[0].getLatitude(),points[0].getLongitude()))
 	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));
 		turnNextNode = map.addMarker(new MarkerOptions().position(new LatLng(points[1].getLatitude(),points[1].getLongitude()))
-	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));
-		
+	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));	*/
 	}
 
-	private void handleChangeDes(){		
-		isChangeDes = 1;	
+	private void handleChangeDes(){	
+		if(isService ==1){
+			isChangeDes = 1;
+			changedestip.setVisibility(View.VISIBLE);		
+		}		    
+		else
+			LogUtil.toast(mContext, "当前状态不能提供改变终点服务！");
+			
 	}
 	
 	private void handleGetCharged(){
-		api.requestCharge();
+		if(isService == 1)		
+		    api.requestCharge();
+		else
+			LogUtil.toast(mContext, "当前状态不能提供有序充电服务！");
 	}
 	
 	private int  returnStrategy(){
@@ -354,4 +402,11 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 		}else
 			return LENGTH_SHORT;
 	}
+	
+	private String reserveDecimal(double d) {
+		String result = String.format("%.2f", d);
+		return result;
+	}
+	
+	
 }
