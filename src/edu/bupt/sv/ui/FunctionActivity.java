@@ -166,6 +166,7 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
          super.onCreate(savedInstanceState);
          setContentView(R.layout.function_page);
          
+         isFollow = 1;
          DirectionView directionView = (DirectionView) this.findViewById(R.id.cv);
          this.mContext = this.getApplicationContext();
          vehicleid = getIntent().getIntExtra("id", 0);
@@ -361,6 +362,7 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
 			carPosition.remove();
 		LatLng Position = new LatLng(newPoint.latitude, newPoint.longitude);  
 		carPosition= map.addMarker(new MarkerOptions().position(Position)); 
+		System.out.println("#####isfollow"+isFollow);
 		if(isFollow==1)		
 		    map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position,16));
 	}
