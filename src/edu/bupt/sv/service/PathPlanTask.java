@@ -106,6 +106,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	}
 	
 	private void handleStartPlan() {
+		//
 		tmAccessor.setJobHandler(mLocalHandler);
 		pfAccessor.setJobHandler(mLocalHandler);
 		// 告知TM临时终点

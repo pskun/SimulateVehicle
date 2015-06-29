@@ -362,7 +362,7 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
 			carPosition.remove();
 		LatLng Position = new LatLng(newPoint.latitude, newPoint.longitude);  
 		carPosition= map.addMarker(new MarkerOptions().position(Position)); 
-		System.out.println("#####isfollow"+isFollow);
+		//System.out.println("#####isfollow"+isFollow);
 		if(isFollow==1)		
 		    map.moveCamera(CameraUpdateFactory.newLatLngZoom(Position,16));
 	}
@@ -377,7 +377,7 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
 		turnCurrentNode = map.addMarker(new MarkerOptions().position(new LatLng(points[0].getLatitude(),points[0].getLongitude()))
 	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));
 		turnNextNode = map.addMarker(new MarkerOptions().position(new LatLng(points[1].getLatitude(),points[1].getLongitude()))
-	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));	*/
+	    		  .icon(BitmapDescriptorFactory.fromResource(R.drawable.attention)));	*/ 
 	}
 
 	private void handleChangeDes(){	
