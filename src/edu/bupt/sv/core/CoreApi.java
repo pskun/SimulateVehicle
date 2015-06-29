@@ -23,6 +23,10 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 		this.coreListener = listener;
 	}
 	
+	/**
+	 * coreThread线程是否正常
+	 * @return
+	 */
 	private boolean isThreadValid() {
 		if(coreThread == null || !coreThread.isThreadRunning())
 		{
@@ -38,6 +42,7 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 	public boolean initApi() {
 		if(coreThread != null) {
 			LogUtil.warn("coreThread already exists.");
+			coreThread.setListener(coreListener);
 			return true;
 		}
 		coreThread = new CoreThread(mContext);
@@ -102,7 +107,6 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 
 	@Override
 	public SparseArray<Vehicle> getVehicleList() {
-		//System.out.println("1111112");
 		DataConfig dc = DataConfig.getInstance(mContext);
 		return dc.getVehicleList();
 	}

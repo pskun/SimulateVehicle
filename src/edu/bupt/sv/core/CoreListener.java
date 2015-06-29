@@ -10,6 +10,10 @@ import edu.bupt.sv.entity.Vehicle;
 
 public interface CoreListener {
 	
+	/**
+	 * @deprecated
+	 * @param vehicleIds
+	 */
 	void onRecvVehicleList(List<Integer> vehicleIds);
 	
 	/**

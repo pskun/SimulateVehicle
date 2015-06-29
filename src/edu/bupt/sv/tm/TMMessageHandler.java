@@ -159,6 +159,7 @@ public class TMMessageHandler implements NetworkConstants {
 
 	/**
 	 * 发送订阅所有车辆消息
+	 * @deprecated
 	 * @return 发送成功返回发送ID，否则返回-1
 	 */
 	public int sendSubAllVehicle(int size) 
@@ -190,6 +191,7 @@ public class TMMessageHandler implements NetworkConstants {
 
 	/**
 	 * 发送订阅CI充电站消息
+	 * @deprecated
 	 * @param CI 充电站Id
 	 * @return
 	 */
@@ -202,7 +204,12 @@ public class TMMessageHandler implements NetworkConstants {
 		return -1;
 	}
 
-	public int sendGetAllLinkTrans() // 发送订阅所有Links的交通信息
+	/**
+	 * 发送订阅所有Links的交通信息
+	 * @deprecated
+	 * @return
+	 */
+	public int sendGetAllLinkTrans()
 	{
 		Results results = JsonMessageSend.sendSubAllLink();
 		String message_send = results.s;
@@ -211,7 +218,13 @@ public class TMMessageHandler implements NetworkConstants {
 		return -1;
 	}
 
-	public int sendGetLinkTrans(List<Integer> links) // 发送订阅部分Links的交通信息
+	/**
+	 * 发送订阅部分Links的交通信息
+	 * @deprecated
+	 * @param links
+	 * @return
+	 */
+	public int sendGetLinkTrans(List<Integer> links)
 	{
 		Results results = JsonMessageSend.sendSubLink(links);
 		String message_send = results.s;
@@ -220,6 +233,11 @@ public class TMMessageHandler implements NetworkConstants {
 		return -1;
 	}
 
+	/**
+	 * 单次请求，非持续订阅
+	 * @param VI
+	 * @return
+	 */
 	public int sendSubVehicleInfo(List<Integer> VI) // 发送订阅车辆统计消息订阅消息
 	{
 		Results results = JsonMessageSend.sendSubVInfo(VI); // 生成待发送消息
@@ -229,9 +247,18 @@ public class TMMessageHandler implements NetworkConstants {
 		return -1;
 	}
 
+	/**
+	 * 发送创建车辆消息
+	 * @param Index 车辆ID
+	 * @param LS 规划的路径link id
+	 * @param CS 途径的充电站id
+	 * @param CurBattery 当前电量
+	 * @param AllBattery 总电量
+	 * @return
+	 */
 	public int sendNewVehicle(List<Integer> Index, List<List<Integer>> LS,
 			List<List<Integer>> CS, List<Double> CurBattery,
-			List<Double> AllBattery) // 发送创建车辆消息
+			List<Double> AllBattery)
 	{
 		Results results = JsonMessageSend.sendPubNew(Index, LS, CS, CurBattery,
 				AllBattery);

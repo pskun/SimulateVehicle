@@ -20,7 +20,6 @@ import edu.bupt.sv.core.CoreApi;
 import edu.bupt.sv.core.CoreListener;
 import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
-import edu.bupt.sv.entity.Vehicle;
 import edu.bupt.sv.utils.LogUtil;
 
 import android.app.Activity;
@@ -31,7 +30,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,7 +37,6 @@ import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	private static final int TIME_SHORT = 0;
@@ -96,7 +93,7 @@ public class FunctionActivity extends Activity  implements OnMapReadyCallback{
 	
 	@Override
 	public void onBackPressed() {
-		reset();
+		// reset();
 		super.onBackPressed();
 	}
 	
