@@ -40,7 +40,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import android.widget.ToggleButton;
+
 
 public class FunctionActivity extends Activity implements OnMapReadyCallback, ErrorConstants {
 	private static final int TIME_SHORT = 0;
@@ -100,7 +102,7 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
 	
 	@Override
 	public void onBackPressed() {
-		reset();
+		// reset();
 		super.onBackPressed();
 	}
 	
@@ -158,7 +160,7 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
 			Point[] info = new Point[]{crossPoint,newStartPoint};
 			uiHandler.obtainMessage(MSG_ON_GET_TURNNODEID,info).sendToTarget();
 			 
-		}	
+		}
 	};
 
    @Override

@@ -2,11 +2,7 @@ package edu.bupt.sv.core;
 
 import java.util.List;
 
-import android.util.SparseArray;
-
-import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
-import edu.bupt.sv.entity.Vehicle;
 
 public interface CoreListener {
 	

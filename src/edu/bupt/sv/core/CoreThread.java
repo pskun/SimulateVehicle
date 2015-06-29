@@ -22,7 +22,7 @@ import android.os.Message;
 import android.util.Log;
 import android.util.SparseArray;
 
-public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
+public final class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 
 	private static final String TAG = "coreThread";
 	private boolean isRunning = false;
@@ -129,6 +129,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		}
 	}
 	
+	/**
+	 * 收到Init消息后的处理函数
+	 */
 	private void handleInitThread() {
 		LogUtil.verbose("coreThread: begin initialize thread.");
 		vehicle = null;
@@ -149,6 +152,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		LogUtil.verbose("coreThread is now initialized.");
 	}
 	
+	/**
+	 * 收到quit消息后的处理函数
+	 */
 	private void handleOnQuit() {
 		LogUtil.verbose("coreThread: begin destroy thread.");
 		isRunning = false;
@@ -166,6 +172,10 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		LogUtil.verbose("coreThread is now destroyed.");
 	}
 	
+	/**
+	 * @deprecated
+	 * 收到请求车辆列表后的处理函数
+	 */
 	private void handleRequestVehicleList() {
 		if (tmAccessor != null) {
 			boolean ret = tmAccessor.requestAllVehicle();
@@ -260,6 +270,10 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		ppTask.startTask(vehicle.getId(), startPoint, endPoint, tempDestNodeId);
 	}
 	
+	/**
+	 * 收到改变终点请求，开始路径规划
+	 * @param newDestNodeId
+	 */
 	private void handleChangeDest(Integer newDestNodeId) {
 		if(isNowCharging()) return;
 		LogUtil.verbose("coreThread: start change destination. newDestNodeId: " + newDestNodeId);
@@ -298,6 +312,9 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		ppTask.startTask(vehicle.getId(), startPoint, endPoint, tempDestNodeId);
 	}
 	
+	/**
+	 * 收到有序充电请求，开始进行路径规划
+	 */
 	private void handleRequestCharge() {
 		double currentLat = vehicle.getLatitude();
 		double currentLng = vehicle.getLongitude();
@@ -305,6 +322,10 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		handleChangeDest(nearestNodeId);
 	}
 	
+	/**
+	 * 收到订阅车辆的数据
+	 * @param subInfo
+	 */
 	private void onReceiveSubInfoData(SubInfo subInfo) {
 		// just for debug
 		// Log.d("DEBUG", "Subscribe Information below");
@@ -331,6 +352,10 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		}
 	}
 	
+	/**
+	 * 收到新的路径规划数据
+	 * @param pathInfo
+	 */
 	private void onReceivePathInfoData(PathInfo pathInfo)  {
 		List<Integer> links = pathInfo.links;
 		List<Point> nodes = pathInfo.pathNodes;
@@ -359,6 +384,11 @@ public class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 		}
 	}
 	
+	/**
+	 * 收到receiveData消息的处理函数
+	 * @param dataType 数据类型
+	 * @param data 数据实体
+	 */
 	private void handleReceiveData(int dataType, Object data) {
 		if(data == null) {
 			if(coreListener != null) {

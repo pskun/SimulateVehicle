@@ -72,7 +72,7 @@ public class Client {
 	public final short LENBYTES = 4;
 	
 	private ClientInput ci;
-	
+	// 线程 is valid
 	private boolean isValid = false;
 	
 	public Client(Socket socket){
@@ -137,7 +137,14 @@ public class Client {
 		return ret_msg;
 	}
 	
-	public String sendAndDeal (String msg) throws InterruptedException    //一次发送一个请求并接受一个回复
+	/**
+	 * 一次发送一个请求并接受一个回复
+	 * @deprecated
+	 * @param msg
+	 * @return
+	 * @throws InterruptedException
+	 */
+	public String sendAndDeal (String msg) throws InterruptedException
 	{
 		int len = msg.length();
 		byte[] sendBuffer = new byte[len + LENBYTES];
@@ -166,10 +173,16 @@ public class Client {
 		return ret_msg;
 	}
 	
+	/**
+	 * 停止接收
+	 */
 	public void closeReceive() {
 		isValid = false;
 	}
 	
+	/**
+	 * 关闭连接
+	 */
 	public void closeClient() {
 		if(ci != null) {
 			ci.interrupt();

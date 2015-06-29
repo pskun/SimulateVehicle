@@ -7,13 +7,8 @@ import java.util.Map;
 
 import edu.bupt.sv.core.ApiFactory;
 import edu.bupt.sv.core.CoreApi;
-import edu.bupt.sv.core.CoreListener;
-import edu.bupt.sv.entity.Node;
-import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.Vehicle;
-
 import edu.bupt.sv.utils.LogUtil;
-
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,8 +16,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
@@ -97,8 +90,9 @@ public class HomeActivity extends Activity {
     	  intent.putExtra("id", position);
     	  startActivity(intent);
     	}
-		else	        
+		else {
 			LogUtil.toast(mContext, "Œﬁø…”√Õ¯¬Á£°");
+		}
 	}
 
 	@Override

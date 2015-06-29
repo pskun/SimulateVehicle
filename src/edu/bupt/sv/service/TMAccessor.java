@@ -149,6 +149,11 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		return true;
 	}
 	
+	/**
+	 * 检查响应码
+	 * @param code
+	 * @return
+	 */
 	private boolean checkResponseCode(int code) {
 		// LogUtil.verbose("respond code: " + code);
 		// 判断响应码
@@ -166,6 +171,10 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		return true;
 	}
 
+	/**
+	 * 处理应答消息
+	 * @param NTY
+	 */
 	private void handleVehicleListNTY(NTYMessage NTY) {
 		LogUtil.verbose("handle vehicle list NTY");
 		if(!checkResponseCode(NTY.NTY.Code))
