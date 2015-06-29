@@ -76,7 +76,7 @@ public class TestActivity extends Activity {
 
 		@Override
 		public void onOtherInfoChanged(double charge, double speed,
-				Integer linkId) {
+				Integer linkId,Integer status) {
 			// TODO Auto-generated method stub
 			
 		}

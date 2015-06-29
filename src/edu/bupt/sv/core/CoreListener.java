@@ -2,11 +2,7 @@ package edu.bupt.sv.core;
 
 import java.util.List;
 
-import android.util.SparseArray;
-
-import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Point;
-import edu.bupt.sv.entity.Vehicle;
 
 public interface CoreListener {
 	
@@ -26,7 +22,7 @@ public interface CoreListener {
 	 * 车辆其他变化时的回调
 	 * @param charge
 	 */
-	void onOtherInfoChanged(double charge, double speed, Integer linkId);
+	void onOtherInfoChanged(double charge, double speed, Integer linkID ,Integer status);
 	
 	/**
 	 * 重新规划路径后的回调

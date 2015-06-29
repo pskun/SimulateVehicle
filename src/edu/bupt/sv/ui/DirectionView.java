@@ -135,7 +135,7 @@ public class DirectionView extends View implements EntityConstants {
             drawUpTriangle(canvas);         
             break;
         case DOWN:
-            drawDownTriangle(canvas);
+            //drawDownTriangle(canvas);
             break;
         case LEFT:
             drawLeftTriangle(canvas);

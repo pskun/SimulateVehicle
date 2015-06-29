@@ -20,22 +20,27 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
        />
-       <TextView 
+      
+      <TextView 
+           android:id="@+id/longitude"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:text="经度：0"  
+           android:textSize="22sp"
+           android:layout_weight="1"
+           android:layout_alignParentLeft="true"
+           android:layout_alignParentTop="true"
+        />
+     
+              
+        <TextView 
            android:id="@+id/battery"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
-           android:text="当前电量：0"
-           android:textSize="20sp"
+           android:text="当前电量 ：0 kwh"
+           android:textSize="22sp"
         />
-         <TextView 
-           android:id="@+id/route"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:text="当前路段：0"
-           android:textSize="20sp"
-         />
       </LinearLayout>
       
       <LinearLayout
@@ -44,31 +49,28 @@
         android:layout_weight="0.5"
         android:orientation="horizontal"
        >     
-      <TextView 
-           android:id="@+id/longitude"
+       <TextView 
+           android:id="@+id/status"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
-           android:text="经度：0"  
-           android:textSize="20sp"
            android:layout_weight="1"
-           android:layout_alignParentLeft="true"
-           android:layout_alignParentTop="true"
-        />
-      
-       <TextView 
+           android:text="当前状态：0"
+           android:textSize="22sp"
+         />      
+         <TextView 
            android:id="@+id/latitude"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:text="纬度：0"
-           android:textSize="20sp"
+           android:textSize="22sp"
            android:layout_weight="1"
-        />
+        />   
        <TextView 
            android:id="@+id/speed"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
-           android:text="当前速度：0"
-           android:textSize="20sp"
+           android:text="当前速度：0 mile/h"
+           android:textSize="22sp"
            android:layout_weight="1"
            />
       </LinearLayout>
@@ -95,8 +97,18 @@
            android:layout_height="fill_parent"
            android:layout_weight="1"
            android:orientation="vertical" >
- 
-  <RadioGroup android:id="@+id/radioGroup" 
+           
+        
+    <ToggleButton 
+        android:id="@+id/followButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:textOff="取消跟随"
+        android:textOn="自动跟随" />
+           
+   
+    <RadioGroup android:id="@+id/radioGroup" 
               android:contentDescription="服务策略" 
               android:layout_width="wrap_content" 
               android:layout_height="wrap_content"
@@ -109,7 +121,7 @@
          android:layout_height="match_parent"
          android:checked="true"
          android:text="时间最短"
-         android:textSize="20sp"
+         android:textSize="22sp"
           >
       </RadioButton>    
 
@@ -118,11 +130,21 @@
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:text="路径最短"   
-          android:textSize="20sp"     
+          android:textSize="22sp"     
            >
 
         </RadioButton> 
    </RadioGroup>
+   
+     <TextView 
+           android:id="@+id/strategy"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="请选择服务策略： "
+           android:textSize="22sp"   
+           android:layout_above="@id/radioGroup"   
+     />
+     
   </RelativeLayout>
        <edu.bupt.sv.ui.DirectionView
            android:id="@+id/cv"
@@ -130,12 +152,29 @@
            android:layout_height="match_parent"
            android:layout_gravity="bottom"
            android:layout_weight="1" />
+     <RelativeLayout
+           android:layout_width="fill_parent"
+           android:layout_height="fill_parent"
+           android:layout_weight="1"
+           android:orientation="vertical" >
+        <Button
+            android:id="@+id/changedestip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="地图上选点/点我取消改变终点服务" 
+            android:textSize="22sp"
+            android:textColor="#ff0000"
+            android:visibility="invisible"/>
         <Button
            android:id="@+id/buttonservice"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:layout_gravity="bottom"
-           android:layout_weight="1"
-           android:text="服务" /> 
+           android:layout_alignParentBottom="true"
+           android:text="服  务"
+           android:textSize="22sp"  />
+ 
+    </RelativeLayout>
+          
    </LinearLayout>  
 </LinearLayout>

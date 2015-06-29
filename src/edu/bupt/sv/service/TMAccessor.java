@@ -214,6 +214,12 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		if(NTY.NTY.Link != null) {
 			info.linkId = NTY.NTY.Link.get(0);
 		}
+		//µ±Ç°×´Ì¬status
+		if(NTY.NTY.Status !=null){
+			info.status = NTY.NTY.Status.get(0);
+		}else
+			info.status = 404;
+		
 		if(coreHandler != null) {
 			try {
 				coreHandler.obtainMessage(MSG_ON_RECEIVE, DATA_VEHICLE_INFO, -1, info).sendToTarget();
