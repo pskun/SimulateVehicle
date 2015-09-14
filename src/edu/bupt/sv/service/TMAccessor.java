@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import edu.bupt.sv.core.ErrorConstants;
 import edu.bupt.sv.core.MsgConstants;
 import edu.bupt.sv.entity.SubInfo;
 import edu.bupt.sv.tm.NTYMessage;
@@ -14,7 +15,7 @@ import edu.bupt.sv.utils.CommonUtil;
 import edu.bupt.sv.utils.LogUtil;
 import android.os.Handler;
 
-public class TMAccessor implements NetworkConstants, MsgConstants {
+public class TMAccessor implements NetworkConstants, MsgConstants, ErrorConstants {
 
 	private TMMessageHandler tmMsgHandler = null;
 	private Handler coreHandler;
@@ -59,13 +60,19 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		this.coreHandler = coreHandler;
 	}
 
-	public void init() {
+	public boolean init(String host, int port) {
 		LogUtil.verbose("tmAccessor: begin initialize tmAccessor.");
 		if (null != tmMsgHandler) {
 			LogUtil.warn("tmMsgHandler already exists.");
-			return;
+			return true;
 		}
-		tmMsgHandler = new TMMessageHandler(tmListener);
+		try {
+			tmMsgHandler = new TMMessageHandler(tmListener, host, port);
+		} catch(Exception e) {
+			e.printStackTrace();
+			coreHandler.obtainMessage(MSG_ON_ERROR, ERROR_ON_INIT, -1).sendToTarget();
+			return false;
+		}
 		nextVehicleListSendId = -1;
 		nextChangeDestSendId = -1;
 		nextChangePathSendId = -1;
@@ -77,6 +84,8 @@ public class TMAccessor implements NetworkConstants, MsgConstants {
 		else subVehicleSet = new HashSet<Integer>(5);
 		
 		LogUtil.verbose("tmAccessor: initialize tmAccessor done.");
+		
+		return true;
 	}
 
 	public void destroy() {

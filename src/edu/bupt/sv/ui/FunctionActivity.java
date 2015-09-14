@@ -161,6 +161,12 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
 			uiHandler.obtainMessage(MSG_ON_GET_TURNNODEID,info).sendToTarget();
 			 
 		}
+
+		@Override
+		public void onInitStatus(int status) {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 
    @Override

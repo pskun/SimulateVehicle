@@ -52,6 +52,7 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 			new Thread(coreThread).start();
 		} catch(IllegalThreadStateException e) {
 			e.printStackTrace();
+			return false;
 		}
 		LogUtil.verbose("coreThread started.");
 		return true;
