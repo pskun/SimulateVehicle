@@ -13,4 +13,6 @@ public interface ErrorConstants {
 	public static final int ERROR_NULL_POINTER = 5;
 	
 	public static final int ERROR_ON_CHARGING = 6;
+	// ≥ı ºªØ ß∞‹
+	public static final int ERROR_ON_INIT = 7;
 }

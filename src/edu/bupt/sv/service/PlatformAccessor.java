@@ -15,6 +15,7 @@ import edu.bupt.sv.core.MsgConstants;
 import edu.bupt.sv.entity.PathInfo;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.utils.CommonUtil;
+import edu.bupt.sv.utils.ConfigUtil;
 import edu.bupt.sv.utils.LogUtil;
 import android.content.Context;
 import android.os.Handler;
@@ -28,6 +29,8 @@ public class PlatformAccessor implements NetworkConstants, MsgConstants {
 	private static final String FIELD_LATITUDE = "latitude";
 	private static final String FIELD_LONGITUDE = "longitude";
 	
+	private static String iov_addr = null; 
+	
 	private Context context;
 	private Handler targetHandler;
 
@@ -37,6 +40,7 @@ public class PlatformAccessor implements NetworkConstants, MsgConstants {
 		super();
 		this.context = context;
 		this.client = new AsyncHttpClient();
+		PlatformAccessor.iov_addr = ConfigUtil.readIovAddr(context);
 	}
 
 	public void setJobHandler(Handler handler) {
@@ -117,7 +121,7 @@ public class PlatformAccessor implements NetworkConstants, MsgConstants {
 			double endLat, double endLng) {
 		return String
 				.format("%s/Ability/services/ocs/plan/%f/%f/%f/%f/20.0/0.013888888888888888/120.0/0/12345",
-						IOV_HOST, startLng, startLat, endLng, endLat);
+						iov_addr, startLng, startLat, endLng, endLat);
 	}
 	
 	public void planPath(double startLat, double startLng, double endLat, double endLng) {

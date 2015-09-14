@@ -133,7 +133,7 @@ class PUBMessage_Dst {
 public class TMMessageHandler implements NetworkConstants {
 	static Client client = null;
 	
-	public boolean initialize() {
+	public boolean initialize(String host, int port) {
 		try {
 			client = new Client(TM_HOST, TM_PORT);
 		} catch (Exception e) {
@@ -300,11 +300,13 @@ public class TMMessageHandler implements NetworkConstants {
 		return -1;
 	}
 
-	public TMMessageHandler(final TMListener handler) {
+	public TMMessageHandler(final TMListener handler, String host, int port) throws Exception {
+		boolean initOK = true;
 		if (null == client) {
-			if(!initialize()) {
+			if(!initialize(host, port)) {
 				LogUtil.error("TMMessageHandler initialize failed.");
-				System.exit(1);
+				// System.exit(1);
+				throw new Exception("TM initialize failed.");
 			}
 		}
 		new Thread(new Runnable() {
@@ -326,7 +328,7 @@ public class TMMessageHandler implements NetworkConstants {
 		}).start();
 		LogUtil.verbose("TMMessageHandler: initialize TMMessageHandler done.");
 	}
-
+/*
 	public static void main(String[] args) {
 		TMMessageHandler jm = new TMMessageHandler(new TMListener() {
 			@Override
@@ -375,6 +377,7 @@ public class TMMessageHandler implements NetworkConstants {
 		li.add(1);
 		jm.sendSubVehicleConstantly(li);
 	}
+*/
 }
 
 class JsonMessageSend {

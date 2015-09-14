@@ -86,6 +86,12 @@ public class TestActivity extends Activity {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void onInitStatus(int status) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	};
 	

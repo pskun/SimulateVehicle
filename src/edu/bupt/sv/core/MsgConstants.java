@@ -52,4 +52,10 @@ public interface MsgConstants {
 	public static final int VEHICLE_TERMINAL =-2;
 	//车辆运行状态-未知状态
 	public static final int VEHICLE_UNKNOWN =404;
+	
+	// 初始化连接状态的标识
+	// 初始化成功
+	public static final int INIT_STATUS_OK = 1;
+	// 初始化失败
+	public static final int INIT_STATUS_FAILED = -1;
 }

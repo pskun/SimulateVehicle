@@ -12,6 +12,7 @@ import edu.bupt.sv.entity.Vehicle;
 import edu.bupt.sv.service.PathPlanTask;
 import edu.bupt.sv.service.TMAccessor;
 import edu.bupt.sv.utils.CommonUtil;
+import edu.bupt.sv.utils.ConfigUtil;
 import edu.bupt.sv.utils.DataConfig;
 import edu.bupt.sv.utils.LogUtil;
 
@@ -122,6 +123,7 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 			handleReceiveData(msg.arg1, msg.obj);
 			break;
 		case MSG_ON_ERROR:
+			handleOnError(msg.arg1, msg.obj);
 			break;
 		case MSG_ON_QUIT:
 			handleOnQuit();
@@ -134,22 +136,35 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 	 */
 	private void handleInitThread() {
 		LogUtil.verbose("coreThread: begin initialize thread.");
+		// 读取配置文件
+		String tmHost = ConfigUtil.readTmHost(mContext);
+		int tmPort = ConfigUtil.readTmPort(mContext);
+		// ip和端口不合法
+		if(tmHost==null || tmPort<0) {
+			mHandler.obtainMessage(MSG_ON_ERROR, ERROR_ON_INIT, -1).sendToTarget();
+			return;
+		}
+		
+		// 初始化各working线程
 		vehicle = null;
-		if (null == tmAccessor) {
-			tmAccessor = new TMAccessor(mHandler);
-			tmAccessor.init();
-		} else {
-			LogUtil.warn("tmAccessor already exists.");
+
+		tmAccessor = new TMAccessor(mHandler);
+		// 初始化TM失败了
+		if(!tmAccessor.init(tmHost, tmPort)) {
+			mHandler.obtainMessage(MSG_ON_ERROR, ERROR_ON_INIT, -1).sendToTarget();
+			return;
 		}
-		if (null == dataConfig) {
-			dataConfig = DataConfig.getInstance(mContext);
-		}
-		if (ppTask == null) {
-			ppTask = new PathPlanTask(mContext, mHandler, tmAccessor);
-		} else {
-			LogUtil.warn("ppTask already exists.");
-		}
+
+		dataConfig = DataConfig.getInstance(mContext);
+
+		ppTask = new PathPlanTask(mContext, mHandler, tmAccessor);
+
 		LogUtil.verbose("coreThread is now initialized.");
+		
+		// 回调初始化成功接口
+		if(coreListener!=null) {
+			coreListener.onInitStatus(INIT_STATUS_OK);
+		}
 	}
 	
 	/**
@@ -214,7 +229,7 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 		// 订阅车辆信息
 		boolean ret = tmAccessor.requestInitVehicle(vehicleId);
 		if(!ret && coreListener != null) {
-			coreListener.onError(ERROR_INIT_VEHICLE);
+			mHandler.obtainMessage(MSG_ON_ERROR, ERROR_INIT_VEHICLE, -1).sendToTarget();
 		}
 	}
 	
@@ -390,14 +405,12 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 	 * @param data 数据实体
 	 */
 	private void handleReceiveData(int dataType, Object data) {
-		if(data == null) {
-			if(coreListener != null) {
-				coreListener.onError(ERROR_EMPTY_DATA);
-			}
-		}
 		if(coreListener == null) {
 			LogUtil.error("CoreThread: coreListener is null.");
 			return;
+		}
+		if(data == null) {
+			mHandler.obtainMessage(MSG_ON_ERROR, ERROR_EMPTY_DATA, -1).sendToTarget();
 		}
 		switch(dataType)
 		{
@@ -413,6 +426,23 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 		}
 	}
 	
+	private void handleOnError(int errorType, Object detail) {
+		if(coreListener==null)
+			return;
+		switch(errorType) {
+		case ERROR_ON_INIT:
+			coreListener.onInitStatus(INIT_STATUS_FAILED);
+			sendMessage(MSG_ON_QUIT);
+			break;
+		case ERROR_INIT_VEHICLE:
+			coreListener.onInitStatus(INIT_STATUS_FAILED);
+			sendMessage(MSG_ON_QUIT);
+			break;
+		default:
+			LogUtil.error(TAG, "error type: " + errorType);
+		}
+	}
+	
 	/**
 	 * 以下是关于车辆信息的函数
 	 */
@@ -423,7 +453,7 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 	private boolean isExistVehicle() {
 		if(vehicle == null) {
 			LogUtil.error("entity vehicle is null.");
-			coreListener.onError(ERROR_NULL_POINTER);
+			// coreListener.onError(ERROR_NULL_POINTER);
 			return false;
 		}
 		return true;
@@ -504,10 +534,13 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 	}
 	
 	private boolean isNowCharging() {
+		/*
 		if(vehicle.isNowCharging()) {
 			coreListener.onError(ERROR_ON_CHARGING);
 			return true;
 		}
 		return false;
+		*/
+		return vehicle.isNowCharging();
 	}
 }
