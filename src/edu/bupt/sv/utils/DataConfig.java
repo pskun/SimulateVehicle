@@ -324,7 +324,7 @@ public class DataConfig {
 				Double reservedEnergy = Double.parseDouble(split[9]);
 				Double speed = Double.parseDouble(split[10]);
 				line = bufReader.readLine();
-				String[] split1 = line.split(" ");
+				String[] split1 = line.split("[ \t]");
 				List<Integer> path = new ArrayList<Integer>();
 				for (int i = 0; i < split1.length; i++) {
 					path.add(Integer.parseInt(split1[i]));

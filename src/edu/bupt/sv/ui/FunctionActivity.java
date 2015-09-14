@@ -179,9 +179,7 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
          status = (TextView) this.findViewById(R.id.status);
          battery = (TextView)this.findViewById(R.id.battery);
          speed = (TextView)this.findViewById(R.id.speed);
-         
-         
-         
+           
          vid.setText("车辆ID："+vehicleid);
          init();
          directionView.init(api);
@@ -299,7 +297,11 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
 	private void handleOnOtherinfoChanged(Object obj) {
 		Double[] info = (Double[]) obj;	
 		int temp = info[2].intValue();
-		if(temp==404){
+		if(info[0].doubleValue()==0){
+			status.setText("当前状态：电量耗光");
+			isService = 0;		
+		}
+		else if(temp==404){
 			status.setText("当前状态：未知状态");
 			isService = 0;
 		}

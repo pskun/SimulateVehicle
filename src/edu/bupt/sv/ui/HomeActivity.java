@@ -83,16 +83,16 @@ public class HomeActivity extends Activity {
 	}
 	
 	public void clickList (int position){
-		if (isNetworkAvailable(HomeActivity.this))
-		{
+		//if (isNetworkAvailable(HomeActivity.this))
+		//{
 		  Intent intent = new Intent();
     	  intent.setClassName(this, "edu.bupt.sv.ui.FunctionActivity");
     	  intent.putExtra("id", position);
     	  startActivity(intent);
-    	}
-		else {
-			LogUtil.toast(mContext, "无可用网络！");
-		}
+    	//}
+		//else {
+			//LogUtil.toast(mContext, "无可用网络！");
+		//}
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class HomeActivity extends Activity {
      * @return
      */
     
-    public boolean isNetworkAvailable(Activity activity)
+   /* public boolean isNetworkAvailable(Activity activity)
     {
         Context context = activity.getApplicationContext();
         // 获取手机所有连接管理对象（包括对wi-fi,net等连接的管理）
@@ -138,7 +138,7 @@ public class HomeActivity extends Activity {
             }
         }
         return false;
-    }
+    }*/
 	
 
 }

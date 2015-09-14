@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:stretchColumns="1">
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="欢迎进入模拟车机" />
+
+    <TableRow >
+        <TextView
+            android:id="@+id/tmhost_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TM连接IP： " />
+
+        <EditText
+            android:id="@+id/tmhost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        </TableRow>
+
+ 
+      <TableRow >
+
+        <TextView
+            android:id="@+id/tmport_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TM连接端口：" />
+
+        <EditText
+            android:id="@+id/tmport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+    </TableRow>
+
+     <TableRow >
+        <TextView
+            android:id="@+id/ivohost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="车联网服务平台IP：" />
+
+        <EditText
+            android:id="@+id/ivohost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+         />
+
+  </TableRow>
+    
+    <Button
+        android:id="@+id/startbutton"
+        android:layout_width="168dp"
+        android:layout_height="wrap_content"
+        android:text="开    始" />
+
+</TableLayout>
