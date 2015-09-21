@@ -23,13 +23,13 @@ public class PathPlanTask implements Runnable, MsgConstants {
 	private TMAccessor tmAccessor;
 	private PlatformAccessor pfAccessor;
 	
+	
 	private Integer vehicleId;
 	private Integer tempDestNodeId;
 	private Point startPoint;
 	private Point destPoint;
-	// 临时终点改变请求的ACK
+	
 	private boolean tempDestChangeACK = false;
-	// 最终终点改变请求的ACK
 	private boolean finalDestChangeACK = false;
 	
 	private PathInfo pathInfo = null;
@@ -43,13 +43,7 @@ public class PathPlanTask implements Runnable, MsgConstants {
 		this.pfAccessor = new PlatformAccessor(ctx);
 	}
 
-	/**
-	 * 开始路径任务
-	 * @param vehicleId 车辆ID
-	 * @param startPoint 起点经纬度
-	 * @param destPoint 终点经纬度
-	 * @param tempDestNodeId 临时终点的node id
-	 */
+
 	public void startTask(Integer vehicleId,Point startPoint, Point destPoint, Integer tempDestNodeId) {
 		if(jobThread!=null && jobThread.isAlive()) {
 			handleOnQuit();

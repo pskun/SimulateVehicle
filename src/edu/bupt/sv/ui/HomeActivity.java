@@ -8,6 +8,7 @@ import java.util.Map;
 import edu.bupt.sv.core.ApiFactory;
 import edu.bupt.sv.core.CoreApi;
 import edu.bupt.sv.entity.Vehicle;
+import edu.bupt.sv.utils.ConfigUtil;
 import edu.bupt.sv.utils.LogUtil;
 
 import android.app.Activity;
@@ -16,15 +17,24 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 public class HomeActivity extends Activity {
 	private ListView vehicleList;
+	private Button confirmButton;
+	private Button allButton;
+	private EditText vid;
+
 	
 	private Context mContext;
 	//private Handler myHandler;
@@ -45,16 +55,57 @@ public class HomeActivity extends Activity {
              		
 		}
 	};
+	
+	private OnClickListener clistener = new OnClickListener(){
+		public void onClick(View v){
+			int buttonid = v.getId();
+			switch (buttonid){
+			case R.id.confirmbutton:
+				if(!TextUtils.isEmpty(vid.getText())){
+				int getVid =Integer.parseInt(vid.getText().toString());
+				if(0<= getVid && getVid<=199){
+					  Intent intent = new Intent();
+			    	  intent.setClassName(mContext, "edu.bupt.sv.ui.FunctionActivity");
+			    	  System.out.println("###########vid+"+getVid);   	  
+			    	  intent.putExtra("id", getVid);
+			    	  startActivity(intent);
+				}}
+				else
+					LogUtil.toast(mContext, "请输入有效的车辆ID！");	
+				
+				break;
+			case R.id.allbutton:
+				loadInfo(api.getVehicleList());
+				vehicleList.setVisibility(View.VISIBLE);
+				System.out.println("###########beforebreak+");   	 
+				break;
+			case R.id.home_page:
+				 InputMethodManager imm = (InputMethodManager)  
+		         getSystemService(Context.INPUT_METHOD_SERVICE);  
+		         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);  
+		        break;  		
+				
+			}
+		}
+	};
+		
 			
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
+		super.onCreate(savedInstanceState);	
 		setContentView(R.layout.home_page);
-		
 		this.mContext = this.getApplicationContext();
+		
+		confirmButton = (Button) findViewById(R.id.confirmbutton);
+		confirmButton.setOnClickListener(clistener);
+		vid = (EditText) findViewById(R.id.vidinput);
+		
+		allButton=(Button) findViewById(R.id.allbutton);
+		allButton.setOnClickListener(clistener);	
+		
+		findViewById(R.id.home_page).setOnClickListener(clistener);
 		init();	
-		loadInfo(api.getVehicleList());
+		//loadInfo(api.getVehicleList());
 	}
 	
 	private void loadInfo (SparseArray<Vehicle> vehicles) {
@@ -79,6 +130,7 @@ public class HomeActivity extends Activity {
 		vehicleList = (ListView) findViewById(R.id.mylist);
 		vehicleList.setAdapter(simpleAdapter);
 		vehicleList.setOnItemClickListener(listener);
+		System.out.println("###########beforeexit+");   	
 		
 	}
 	

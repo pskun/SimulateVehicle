@@ -67,6 +67,7 @@ public class TMAccessor implements NetworkConstants, MsgConstants, ErrorConstant
 			return true;
 		}
 		try {
+			
 			tmMsgHandler = new TMMessageHandler(tmListener, host, port);
 		} catch(Exception e) {
 			e.printStackTrace();

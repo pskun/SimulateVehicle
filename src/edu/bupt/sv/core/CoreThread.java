@@ -141,9 +141,11 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 		int tmPort = ConfigUtil.readTmPort(mContext);
 		// ip和端口不合法
 		if(tmHost==null || tmPort<0) {
+			System.out.println("############ip和端口不合法");
 			mHandler.obtainMessage(MSG_ON_ERROR, ERROR_ON_INIT, -1).sendToTarget();
 			return;
 		}
+		
 		
 		// 初始化各working线程
 		vehicle = null;

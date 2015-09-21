@@ -135,7 +135,7 @@ public class TMMessageHandler implements NetworkConstants {
 	
 	public boolean initialize(String host, int port) {
 		try {
-			client = new Client(TM_HOST, TM_PORT);
+			client = new Client(host, port);
 		} catch (Exception e) {
 			client = null;
 			LogUtil.verbose("initialize TMMessageHandler failed.");

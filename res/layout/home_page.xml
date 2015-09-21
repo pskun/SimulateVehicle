@@ -1,13 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/home_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:focusable="true"  
+    android:focusableInTouchMode="true" 
+    android:background="@drawable/front" >
+    <TableLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:stretchColumns="1"
+   >
+    <TextView
+        android:id="@+id/blank0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"    
+        />
+    <TableRow >
+         <TextView
+         android:id="@+id/vid_"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="请输入车辆ID：" 
+         android:textSize="30sp"  
+         />
+     <EditText
+            android:id="@+id/vidinput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numeric="signed"
+      />  
+      </TableRow>
+      
+         <TextView
+        android:id="@+id/blank1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"    
+        />
+         
+         
+        
+    <TableRow >
+
+       <Button
+           android:id="@+id/confirmbutton"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_alignParentBottom="true"
+           android:text="确  定"
+           android:textSize="22sp"  />
+       <Button
+           android:id="@+id/allbutton"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_alignParentBottom="true"
+           android:text="显 示 车 辆 列 表"
+           android:textSize="22sp"  />
+       </TableRow>
+
+               
+       <View                            
+        android:layout_height="2dip"    
+        android:background="#faf0e6" /> 
+        
+    </TableLayout>
     
     <ListView 
        android:id="@+id/mylist"
        android:layout_width="match_parent"
-       android:layout_height="match_parent"
+       android:layout_height="0dp"
+       android:layout_weight="1"
+  
      />
     
 
