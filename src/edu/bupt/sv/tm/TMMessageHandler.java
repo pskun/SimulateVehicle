@@ -321,13 +321,17 @@ public class TMMessageHandler implements NetworkConstants {
 		}
 		Thread receiveThread = new Thread(new Runnable() {
 			public void run() {
+				// LogUtil.verbose("receive thread is now starting.");
 				while (client != null) {
+					// LogUtil.verbose("client is not null");
 					String jMessage;
 					try {
 						jMessage = new String(client.receive());
 						if (jMessage != null) {
+							// LogUtil.verbose("jMessage is not null");
 							NTYMessage NTY = new Gson().fromJson(jMessage,
 									NTYMessage.class);
+							LogUtil.verbose("NTY ID: " + NTY.ID);
 							handler.onReceiveNTY(NTY.ID, NTY);
 						}
 					} catch (InterruptedException e) {
@@ -336,6 +340,7 @@ public class TMMessageHandler implements NetworkConstants {
 				}
 			}
 		});
+		// receiveThread.start();
 		threadPool.execute(receiveThread);
 		
 		LogUtil.verbose("TMMessageHandler: initialize TMMessageHandler done.");

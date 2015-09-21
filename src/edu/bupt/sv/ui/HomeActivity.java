@@ -142,5 +142,15 @@ public class HomeActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		LogUtil.verbose("KeyDown on RETURN");
+		
+		if(api!=null)
+			api.destroyApi();
+	}
+	
 	
 }

@@ -71,11 +71,14 @@ public class TMAccessor implements NetworkConstants, MsgConstants, ErrorConstant
 			tmMsgHandler = new TMMessageHandler(tmListener, host, port);
 		} catch(Exception e) {
 			e.printStackTrace();
+			
+			System.out.println("~~~~~~~~~");
+			coreHandler.obtainMessage(MSG_ON_ERROR, ERROR_ON_INIT, -1).sendToTarget();
+			
 			// bug fixed
 			// 连不上后需要destroy，防止空指针的出现
 			destroy();
 			
-			coreHandler.obtainMessage(MSG_ON_ERROR, ERROR_ON_INIT, -1).sendToTarget();
 			return false;
 		}
 		nextVehicleListSendId = -1;

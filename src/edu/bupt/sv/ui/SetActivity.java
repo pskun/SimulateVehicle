@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -86,9 +87,9 @@ public class SetActivity extends Activity implements MsgConstants {
 	}
 	private void handleOnReceiveStat(Object obj) {
 		progressbar.dismiss();
+		System.out.println("操你妈逼");
 		int stat = ((Integer)obj).intValue();	
-		if(stat == -1){
-			System.out.println("###########before reset!");	
+		if(stat == INIT_STATUS_FAILED){
 			reset();
 			new AlertDialog.Builder(SetActivity.this).setTitle("提示信息").setMessage("车联网服务或TM服务不可用！")
 			.setPositiveButton("确定", null).setNegativeButton("取消",null)
@@ -132,5 +133,20 @@ public class SetActivity extends Activity implements MsgConstants {
 		
 		api = ApiFactory.getInstance(ctx);
 	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(keyCode == KeyEvent.KEYCODE_BACK) {
+			if(api!=null) api.destroyApi();
+			
+			if(progressbar!=null && progressbar.isShowing()) {
+				progressbar.dismiss();
+				LogUtil.toast(ctx, "连接已取消.");
+			} else {
+				this.finish();
+			}
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 
+	
 }

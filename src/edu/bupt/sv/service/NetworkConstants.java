@@ -18,6 +18,9 @@ public interface NetworkConstants {
 	// 没有需要的数据
 	public final int RES_NO_DATA_CODE = 404;
 	
+	// TM相关参数
+	public final int SOCKET_TIMEOUT = 3000;
+	
 	// 车联网服务相关参数
 	// http连接retry次数
 	public final int MAX_RETRY_TIMES = 3;

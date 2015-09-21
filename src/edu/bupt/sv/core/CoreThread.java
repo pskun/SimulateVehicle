@@ -218,7 +218,7 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 		Assert.assertNotNull(v);
 		this.vehicle = v;
 		// 此时当前linkid为0,手动设置
-		vehicle.setLinkID(vehicle.getPath().get(0));
+		vehicle.setLinkID(vehicle.getPath().get(0)); 
 		if(coreListener!=null) {
 			coreListener.onOtherInfoChanged(vehicle.getCharge(), vehicle.getSpeed().doubleValue(), vehicle.getLinkID(),vehicle.getStatus());
 		}
@@ -438,15 +438,14 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 	}
 	
 	private void handleOnError(int errorType, Object detail) {
-		if(coreListener==null)
-			return;
 		switch(errorType) {
 		case ERROR_ON_INIT:
-			stateListener.onInitStatus(INIT_STATUS_FAILED);
+			System.out.println("caonima");
+			if(stateListener!=null) stateListener.onInitStatus(INIT_STATUS_FAILED);
 			sendMessage(MSG_ON_QUIT);
 			break;
 		case ERROR_INIT_VEHICLE:
-			stateListener.onInitStatus(INIT_STATUS_FAILED);
+			if(stateListener!=null) stateListener.onInitStatus(INIT_STATUS_FAILED);
 			sendMessage(MSG_ON_QUIT);
 			break;
 		default:
