@@ -4,11 +4,11 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.PathInfo;
 import edu.bupt.sv.entity.Point;
 import edu.bupt.sv.entity.SubInfo;
 import edu.bupt.sv.entity.Vehicle;
+import edu.bupt.sv.service.CheckStateListener;
 import edu.bupt.sv.service.PathPlanTask;
 import edu.bupt.sv.service.TMAccessor;
 import edu.bupt.sv.utils.CommonUtil;
@@ -21,13 +21,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.util.SparseArray;
 
 public final class CoreThread implements Runnable, MsgConstants, ErrorConstants {
 
 	private static final String TAG = "coreThread";
 	private boolean isRunning = false;
+	
 	private CoreListener coreListener = null;
+	private CheckStateListener stateListener = null;
+	
 	private Handler mHandler;
 	private Context mContext;
 	
@@ -52,6 +54,10 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 
 	public void setListener(CoreListener listener) {
 		this.coreListener = listener;
+	}
+	
+	public void setStateListener(CheckStateListener stateListener) {
+		this.stateListener = stateListener;
 	}
 	
 	public void sendMessage(int msgCode) {
@@ -141,7 +147,7 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 		int tmPort = ConfigUtil.readTmPort(mContext);
 		// ip和端口不合法
 		if(tmHost==null || tmPort<0) {
-			System.out.println("############ip和端口不合法");
+			LogUtil.error("ip和端口不合法");
 			mHandler.obtainMessage(MSG_ON_ERROR, ERROR_ON_INIT, -1).sendToTarget();
 			return;
 		}
@@ -164,8 +170,8 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 		LogUtil.verbose("coreThread is now initialized.");
 		
 		// 回调初始化成功接口
-		if(coreListener!=null) {
-			coreListener.onInitStatus(INIT_STATUS_OK);
+		if(stateListener != null) {
+			stateListener.onInitStatus(INIT_STATUS_OK);
 		}
 	}
 	
@@ -436,11 +442,11 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 			return;
 		switch(errorType) {
 		case ERROR_ON_INIT:
-			coreListener.onInitStatus(INIT_STATUS_FAILED);
+			stateListener.onInitStatus(INIT_STATUS_FAILED);
 			sendMessage(MSG_ON_QUIT);
 			break;
 		case ERROR_INIT_VEHICLE:
-			coreListener.onInitStatus(INIT_STATUS_FAILED);
+			stateListener.onInitStatus(INIT_STATUS_FAILED);
 			sendMessage(MSG_ON_QUIT);
 			break;
 		default:

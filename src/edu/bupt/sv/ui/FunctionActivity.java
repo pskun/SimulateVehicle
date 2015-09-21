@@ -29,7 +29,6 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
@@ -160,12 +159,6 @@ public class FunctionActivity extends Activity implements OnMapReadyCallback, Er
 			Point[] info = new Point[]{crossPoint,newStartPoint};
 			uiHandler.obtainMessage(MSG_ON_GET_TURNNODEID,info).sendToTarget();
 			 
-		}
-
-		@Override
-		public void onInitStatus(int status) {
-			// TODO Auto-generated method stub
-			
 		}
 	};
 

@@ -1,6 +1,12 @@
 package edu.bupt.sv.tm;
 
+/**
+ * @author liugaoyi
+ */
+
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.io.IOException;
 
 import com.google.gson.*;
@@ -131,6 +137,8 @@ class PUBMessage_Dst {
 }
 
 public class TMMessageHandler implements NetworkConstants {
+	private ExecutorService threadPool = Executors.newSingleThreadExecutor();
+	
 	static Client client = null;
 	
 	public boolean initialize(String host, int port) {
@@ -154,6 +162,9 @@ public class TMMessageHandler implements NetworkConstants {
 				e.printStackTrace();
 			}
 			client = null;
+		}
+		if(threadPool != null) {
+			threadPool.shutdownNow();
 		}
 	}
 
@@ -301,7 +312,6 @@ public class TMMessageHandler implements NetworkConstants {
 	}
 
 	public TMMessageHandler(final TMListener handler, String host, int port) throws Exception {
-		boolean initOK = true;
 		if (null == client) {
 			if(!initialize(host, port)) {
 				LogUtil.error("TMMessageHandler initialize failed.");
@@ -309,7 +319,7 @@ public class TMMessageHandler implements NetworkConstants {
 				throw new Exception("TM initialize failed.");
 			}
 		}
-		new Thread(new Runnable() {
+		Thread receiveThread = new Thread(new Runnable() {
 			public void run() {
 				while (client != null) {
 					String jMessage;
@@ -325,7 +335,9 @@ public class TMMessageHandler implements NetworkConstants {
 					}
 				}
 			}
-		}).start();
+		});
+		threadPool.execute(receiveThread);
+		
 		LogUtil.verbose("TMMessageHandler: initialize TMMessageHandler done.");
 	}
 /*

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.SparseArray;
 import edu.bupt.sv.entity.Node;
 import edu.bupt.sv.entity.Vehicle;
+import edu.bupt.sv.service.CheckStateListener;
 import edu.bupt.sv.utils.DataConfig;
 import edu.bupt.sv.utils.LogUtil;
 
@@ -11,6 +12,8 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 
 	private CoreThread coreThread = null;
 	private CoreListener coreListener = null;
+	
+	private CheckStateListener stateListener = null;
 	
 	private Context mContext;
 	
@@ -21,6 +24,15 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 
 	public void setListener(CoreListener listener) {
 		this.coreListener = listener;
+	}
+	
+	
+	public void setStateListener(CheckStateListener stateListener) {
+		this.stateListener = stateListener;
+	}
+	
+	public void removeStateListener() {
+		stateListener = null;
 	}
 	
 	/**
@@ -43,10 +55,12 @@ public class CoreApi implements CoreInterface, MsgConstants, ErrorConstants {
 		if(coreThread != null) {
 			LogUtil.warn("coreThread already exists.");
 			coreThread.setListener(coreListener);
+			coreThread.setStateListener(stateListener);
 			return true;
 		}
 		coreThread = new CoreThread(mContext);
 		coreThread.setListener(coreListener);
+		coreThread.setStateListener(stateListener);
 
 		try {
 			new Thread(coreThread).start();

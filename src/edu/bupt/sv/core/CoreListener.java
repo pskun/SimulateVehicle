@@ -36,13 +36,6 @@ public interface CoreListener {
 	 * @param errorCode 见ErrorConstants.java
 	 */
 	void onError(int errorCode);
-	
-	/**
-	 * 新增的接口, 2015/09/14
-	 * 根据需求，需要首先连接服务，待服务连接成功后再进行其他操作
-	 * @param status 当前完成的状态
-	 */
-	void onInitStatus(int status);
 
 	// 以下是调试时的临时接口
 	/**
