@@ -107,6 +107,8 @@
      <View                            
         android:layout_height="2dip"    
         android:background="#faf0e6" /> 
+        
+    
 
       
     <TextView

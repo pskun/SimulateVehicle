@@ -241,7 +241,10 @@ public final class CoreThread implements Runnable, MsgConstants, ErrorConstants 
 	 */
 	private void handlePathPlan(Integer direction) {
 		// 正在充电时不能改变路径，TM会报bug
-		if(isNowCharging()) return;
+		if(isNowCharging()) {
+			LogUtil.toast(mContext, "充电状态不能改变路径！");
+			return;
+		}		
 		LogUtil.verbose("coreThread: start path plan. direction: " + direction);
 		// 获得当前的linkid
 		Integer currentLinkId = vehicle.getLinkID();

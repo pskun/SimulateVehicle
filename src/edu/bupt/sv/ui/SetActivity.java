@@ -11,6 +11,7 @@ import edu.bupt.sv.utils.ConfigUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class SetActivity extends Activity {
@@ -31,6 +33,7 @@ public class SetActivity extends Activity {
 	private EditText tmHost;
 	private EditText tmPort;
 	private EditText ivoHost;
+	private ProgressDialog progressbar;
 	private CoreApi api;
 	private static final int MSG_ON_RECEIVE_STAT = 1;
 	
@@ -49,6 +52,7 @@ public class SetActivity extends Activity {
 					break;}
 				reset();
 				init();
+				progressbar = ProgressDialog.show(ctx, "提示", "正在连接中...");  
 				break;
 			}
 		}
@@ -104,6 +108,7 @@ public class SetActivity extends Activity {
 		}
 	}
 	private void handleOnReceiveStat(Object obj) {
+		progressbar.dismiss();
 		int stat = ((Integer)obj).intValue();	
 		if(stat == -1){
 			System.out.println("###########before reset!");	
